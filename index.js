@@ -4,6 +4,8 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 
+const superAdminRouter = require("./routes/superAdmin/users/superAdminRouter");
+
 const app = express();
 
 const PORT = process.env.PORT || 5000;
@@ -22,6 +24,8 @@ mongoose
   );
 
 // routes
+// superAdmin routes
+app.use("/api/superadmin", superAdminRouter);
 
 // error handler
 
