@@ -3,6 +3,8 @@ const SuperAdmin = require("../../../models/superAdmin/users/superAdminSchema");
 
 //create a superAdmin
 const createSuperAdmin = async (req, res) => {
+
+  console.log(req.body)
   try {
     //check user exsit
     const userExsit = await SuperAdmin.find({ email: req.body.email });
