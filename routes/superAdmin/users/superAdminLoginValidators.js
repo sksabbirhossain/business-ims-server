@@ -1,4 +1,7 @@
 const { validationResult, check } = require("express-validator");
+const createError = require("http-errors");
+
+const SuperAdmin = require("../../../models/superAdmin/users/superAdminSchema");
 
 const superAdminLoginValidators = [
   check("email")
@@ -6,7 +9,17 @@ const superAdminLoginValidators = [
     .withMessage("Email is required")
     .isEmail()
     .withMessage("Invalid email address")
-    .trim(),
+    .trim()
+    .custom(async (value) => {
+      try {
+        const user = await SuperAdmin.findOne({ email: value });
+        if (!user) {
+          throw createError("Invalid credential");
+        }
+      } catch (err) {
+        throw createError(err.message);
+      }
+    }),
   check("password")
     .notEmpty()
     .withMessage("Password is required")

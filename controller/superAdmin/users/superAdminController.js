@@ -1,10 +1,11 @@
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+
 const SuperAdmin = require("../../../models/superAdmin/users/superAdminSchema");
 
 //create a superAdmin
 const createSuperAdmin = async (req, res) => {
-
-  console.log(req.body)
+  console.log(req.body);
   try {
     //check user exsit
     const userExsit = await SuperAdmin.find({ email: req.body.email });
@@ -60,10 +61,64 @@ const createSuperAdmin = async (req, res) => {
 //login a superAdmin
 const loginSuperAdmin = async (req, res) => {
   try {
+    //find the user
+    const findUser = await SuperAdmin.findOne({ email: req.body.email });
+    if (!findUser?._id) {
+      return res.json({
+        errors: {
+          common: {
+            msg: "Invalid credential!",
+          },
+        },
+      });
+    }
+
+    //compare password
+    const validPassword = await bcrypt.compare(
+      req.body.password,
+      findUser?.password
+    );
+
+    if (!validPassword) {
+      return res.json({
+        errors: {
+          common: {
+            msg: "Invalid credential!",
+          },
+        },
+      });
+    }
+
+    //create usr object
+    const userInfo = { ...findUser._doc };
+    delete userInfo.password;
+
+    //create accessToken
+    const accessToken = jwt.sign(userInfo, process.env.JWT_SECRET_KEY, {
+      expiresIn: "1h",
+    });
+
+    // Create refreshToken
+    const refreshToken = jwt.sign(userInfo, process.env.JWT_SECRET_KEY, {
+      expiresIn: "7d",
+    });
+
+    const expiresIn = new Date().getTime() + 3600000; // 1 hour in milliseconds
+
+    res.status(200).json({
+      status: 200,
+      accessToken,
+      refreshToken,
+      expiresIn,
+      ...userInfo,
+      msg: "Super admin login successful!",
+    });
   } catch (err) {
     res.json({
       errors: {
-        common: err.message,
+        common: {
+          msg: err.message,
+        },
       },
     });
   }
