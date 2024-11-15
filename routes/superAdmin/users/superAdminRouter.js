@@ -7,7 +7,7 @@ const {
 const router = express.Router();
 
 // create superAdmin
-router.post("/create", createSuperAdmin);
+router.post("/create-superadmin", createSuperAdmin);
 router.post("/login", loginSuperAdmin);
 
 module.exports = router;
