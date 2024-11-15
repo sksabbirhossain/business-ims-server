@@ -7,6 +7,10 @@ const {
   superAdminValidators,
   superAdminValidationHandler,
 } = require("../../../validators/superAdmin/users/superAdminValidators");
+const {
+  superAdminLoginValidationHandler,
+  superAdminLoginValidators,
+} = require("./superAdminLoginValidators");
 
 const router = express.Router();
 
@@ -17,6 +21,11 @@ router.post(
   superAdminValidationHandler,
   createSuperAdmin
 );
-router.post("/login", loginSuperAdmin);
+router.post(
+  "/login",
+  superAdminLoginValidators,
+  superAdminLoginValidationHandler,
+  loginSuperAdmin
+);
 
 module.exports = router;
