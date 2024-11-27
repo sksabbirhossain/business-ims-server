@@ -12,6 +12,7 @@ const {
   errorHandler,
 } = require("./middleware/common/errorHandler");
 const storeAdminRouter = require("./routes/admin/store/storeAdminRouter");
+const storeRouter = require("./routes/superAdmin/stores/storeRouter");
 
 //initialize app
 const app = express();
@@ -35,6 +36,7 @@ app.use(express.urlencoded({ extended: true }));
 // routes
 // superAdmin routes
 app.use("/api/superadmin", superAdminRouter);
+app.use("/api/superadmin", storeRouter);
 
 //store admin routes
 app.use("/api/admin", storeAdminRouter);
