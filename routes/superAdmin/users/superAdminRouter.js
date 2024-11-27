@@ -2,6 +2,7 @@ const express = require("express");
 const {
   createSuperAdmin,
   loginSuperAdmin,
+  checkUser,
 } = require("../../../controller/superAdmin/users/superAdminController");
 const {
   superAdminValidators,
@@ -27,5 +28,8 @@ router.post(
   superAdminLoginValidationHandler,
   loginSuperAdmin
 );
+
+//refresh token
+router.post("/me", checkUser);
 
 module.exports = router;
