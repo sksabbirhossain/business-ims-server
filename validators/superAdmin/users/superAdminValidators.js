@@ -41,7 +41,7 @@ const superAdminValidationHandler = (req, res, next) => {
   if (Object.keys(mappedErrors).length === 0) {
     next();
   } else {
-    res.status(500).json({
+    res.status(400).json({
       errors: mappedErrors,
     });
   }
