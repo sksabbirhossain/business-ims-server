@@ -34,6 +34,7 @@ const storeAdminSchema = mongoose.Schema(
     },
     address: {
       type: String,
+      required: true,
       trim: true,
     },
     password: {

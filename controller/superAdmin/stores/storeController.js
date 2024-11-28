@@ -1,5 +1,7 @@
 const StoreAdmin = require("../../../models/superAdmin/stores/storeSchema");
 
+
+//created store
 const createStore = async (req, res) => {
   try {
     //check store exsit
