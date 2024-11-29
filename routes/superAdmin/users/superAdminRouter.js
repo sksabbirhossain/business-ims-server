@@ -1,9 +1,13 @@
 const express = require("express");
+
+// import controllers
 const {
   createSuperAdmin,
   loginSuperAdmin,
   checkUser,
 } = require("../../../controller/superAdmin/users/superAdminController");
+
+// import validators
 const {
   superAdminValidators,
   superAdminValidationHandler,
@@ -11,7 +15,7 @@ const {
 const {
   superAdminLoginValidationHandler,
   superAdminLoginValidators,
-} = require("./superAdminLoginValidators");
+} = require("../../../validators/superAdmin/users/superAdminLoginValidators");
 
 const router = express.Router();
 
@@ -22,6 +26,8 @@ router.post(
   superAdminValidationHandler,
   createSuperAdmin
 );
+
+//login superAdmin
 router.post(
   "/login",
   superAdminLoginValidators,
@@ -29,7 +35,6 @@ router.post(
   loginSuperAdmin
 );
 
-//refresh token
-router.post("/me", checkUser);
+
 
 module.exports = router;
