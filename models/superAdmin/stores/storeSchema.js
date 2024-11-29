@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const storeAdminSchema = mongoose.Schema(
+const storeSchema = mongoose.Schema(
   {
     storeName: {
       type: String,
@@ -61,6 +61,6 @@ const storeAdminSchema = mongoose.Schema(
   { timestamps: true }
 );
 
-const StoreAdmin = mongoose.model("StoreAdmin", storeAdminSchema);
+const Store = mongoose.model("Store", storeSchema);
 
-module.exports = StoreAdmin;
+module.exports = Store;

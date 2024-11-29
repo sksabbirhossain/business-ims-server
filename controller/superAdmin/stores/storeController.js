@@ -1,11 +1,11 @@
-const StoreAdmin = require("../../../models/superAdmin/stores/storeSchema");
-
+const bcrypt = require("bcrypt");
+const Store = require("../../../models/superAdmin/stores/storeSchema");
 
 //created store
 const createStore = async (req, res) => {
   try {
     //check store exsit
-    const storeExsit = await StoreAdmin.find({ email: req.body.email });
+    const storeExsit = await Store.find({ email: req.body.email });
     if (storeExsit._id) {
       return res.json({
         errors: {
@@ -20,7 +20,7 @@ const createStore = async (req, res) => {
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
     //make user object
-    const newStore = new StoreAdmin({
+    const newStore = new Store({
       ...req.body,
       picture: null,
       password: hashedPassword,
@@ -32,7 +32,7 @@ const createStore = async (req, res) => {
     //send the response
     if (store && store._id) {
       res.json({
-        store,
+        data: store,
         msg: "Store was create successful!",
       });
     } else {

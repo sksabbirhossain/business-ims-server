@@ -1,6 +1,6 @@
 const { check, validationResult } = require("express-validator");
 const createError = require("http-errors");
-const StoreAdmin = require("../../../models/superAdmin/stores/storeSchema");
+const Store = require("../../../models/superAdmin/stores/storeSchema");
 
 const createStoreValidators = [
   check("storeName")
@@ -23,7 +23,7 @@ const createStoreValidators = [
     .trim()
     .custom(async (value) => {
       try {
-        const user = await StoreAdmin.findOne({ phone: value });
+        const user = await Store.findOne({ phone: value });
         if (user) {
           throw createError("Phone number already in use!");
         }
@@ -39,7 +39,7 @@ const createStoreValidators = [
     .trim()
     .custom(async (value) => {
       try {
-        const user = await StoreAdmin.findOne({ email: value });
+        const user = await Store.findOne({ email: value });
         if (user) {
           throw createError("Email already in use!");
         }
