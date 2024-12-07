@@ -1,0 +1,79 @@
+const mongoose = require("mongoose");
+
+const purchaseSchema = mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+      lowercase: true,
+      trim: true,
+    },
+    description: {
+      type: String,
+      required: true,
+      lowercase: true,
+      trim: true,
+    },
+    purchasePrice: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+
+    sellingPrice: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    quantity: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    category: {
+      type: mongoose.Types.ObjectId,
+      ref: "Category",
+      required: true,
+    },
+    supplierInfo: {
+      type: mongoose.Types.ObjectId,
+      ref: "Supplier",
+      required: true,
+    },
+    storeInfo: {
+      type: mongoose.Types.ObjectId,
+      ref: "Store",
+      required: true,
+    },
+
+    sku: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    Barcode: {
+      type: String,
+      //   required: true,
+      trim: true,
+    },
+    status: {
+      type: Boolean,
+      default: true,
+    },
+    UOM: {
+      type: String,
+      enum: ["KG", "TON", "PICES", "LITER"],
+      default: "PICES",
+      uppercase: ture,
+    },
+    picture: String,
+    picture_info: {
+      public_key: String,
+    },
+  },
+  { timestamps: true }
+);
+
+const Purchase = mongoose.model("Purchase", purchaseSchema);
+
+module.exports = Purchase;
