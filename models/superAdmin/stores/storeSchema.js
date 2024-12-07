@@ -47,7 +47,7 @@ const storeSchema = mongoose.Schema(
       enum: ["storeAdmin", "storeModerator"],
       default: "storeAdmin",
     },
-    storeImg: String,
+    picture: String,
     picture_info: {
       public_key: String,
     },
