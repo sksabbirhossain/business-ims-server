@@ -12,8 +12,9 @@ const {
   notFoundHandler,
   errorHandler,
 } = require("./middleware/common/errorHandler");
-const storeAdminRouter = require("./routes/admin/store/storeAdminRouter");
 const storeRouter = require("./routes/superAdmin/stores/storeRouter");
+const storeAdminRouter = require("./routes/admin/store/storeAdminRouter");
+const categoryRouter = require("./routes/admin/category/categoryRouter");
 
 //initialize app
 const app = express();
@@ -45,6 +46,7 @@ app.use("/api/superadmin", storeRouter);
 
 //store admin routes
 app.use("/api/admin", storeAdminRouter);
+app.use("/api/admin", categoryRouter);
 
 //404 not found error handler
 app.use(notFoundHandler);
