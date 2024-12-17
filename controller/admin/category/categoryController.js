@@ -1,5 +1,36 @@
 const Category = require("../../../models/storeAdmin/categorySchema");
 
+//get all category
+const getCategories = async (req, res) => {
+  try {
+    //get category from database
+    const category = await Category.find().sort({ createdAt: 1 });
+
+    //send the response
+    if (category && category.length >= 0) {
+      res.json({
+        data: category,
+      });
+    } else {
+      res.json({
+        errors: {
+          common: {
+            msg: "Unknown error occured!",
+          },
+        },
+      });
+    }
+  } catch (err) {
+    res.json({
+      errors: {
+        common: {
+          msg: err.message,
+        },
+      },
+    });
+  }
+};
+
 //create category
 const createCategory = async (req, res) => {
   try {
@@ -40,5 +71,6 @@ const createCategory = async (req, res) => {
 };
 
 module.exports = {
+  getCategories,
   createCategory,
 };

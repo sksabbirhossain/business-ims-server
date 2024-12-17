@@ -18,12 +18,24 @@ const checkIsAdmin = (req, res, next) => {
       };
       next();
     } else {
-      res
-        .status(401)
-        .json({ message: "Authentication Failure!!", status: 401 });
+      res.status(401).json({
+        errors: {
+          common: {
+            msg: "Authentication Failure!!",
+          },
+        },
+        status: 401,
+      });
     }
   } catch (err) {
-    res.status(401).json({ message: "Authentication Failure!", status: 401 });
+    res.status(401).json({
+      errors: {
+        common: {
+          msg: "Authentication Failure!!",
+        },
+      },
+      status: 401,
+    });
   }
 };
 
