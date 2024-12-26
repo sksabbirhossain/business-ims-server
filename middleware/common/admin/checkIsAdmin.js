@@ -3,10 +3,22 @@ const jwt = require("jsonwebtoken");
 const checkIsAdmin = (req, res, next) => {
   const { authorization } = req.headers;
 
+  if (!authorization) {
+    return res.status(401).json({
+      errors: {
+        common: {
+          msg: "Authentication Failure",
+        },
+      },
+      status: 401,
+    });
+  }
+
   try {
     const token = authorization.split(" ")[1];
     const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
     const { storeName, ownerName, phone, email, _id, role } = decoded;
+
     if (role === "storeAdmin") {
       req.store = {
         storeName,
@@ -18,7 +30,7 @@ const checkIsAdmin = (req, res, next) => {
       };
       next();
     } else {
-      res.status(401).json({
+      return res.status(401).json({
         errors: {
           common: {
             msg: "Authentication Failure!!",
@@ -28,7 +40,7 @@ const checkIsAdmin = (req, res, next) => {
       });
     }
   } catch (err) {
-    res.status(401).json({
+    return res.status(401).json({
       errors: {
         common: {
           msg: "Authentication Failure!!",

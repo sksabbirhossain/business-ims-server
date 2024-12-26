@@ -36,7 +36,10 @@ const getCategory = async (req, res) => {
   try {
     const { categoryId } = req.params || {};
     //get category from database
-    const category = await Category.findOne({_id: categoryId, storeInfo: req.storeId});
+    const category = await Category.findOne({
+      _id: categoryId,
+      storeInfo: req.store.storeId,
+    });
 
     //send the response
     if (category && category._id) {
