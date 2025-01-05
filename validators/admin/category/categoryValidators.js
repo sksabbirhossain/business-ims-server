@@ -8,10 +8,13 @@ const categoryValidators = [
     .notEmpty()
     .withMessage("Name is required")
     .trim()
-    .custom(async (value) => {
+    .custom(async (value, { req }) => {
       try {
-        const user = await Category.findOne({ name: value });
-        if (user) {
+        const category = await Category.findOne({
+          name: value,
+          storeInfo: req.store.storeId,
+        });
+        if (category) {
           throw createError("Category is already exists");
         }
       } catch (err) {

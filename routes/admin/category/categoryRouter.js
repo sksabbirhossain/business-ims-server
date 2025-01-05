@@ -20,7 +20,13 @@ router.get("/category-list", checkIsAdmin, getCategories);
 router.get("/category/:categoryId", checkIsAdmin, getCategory);
 
 //update a category by categoryId
-router.patch("/category/:categoryId", checkIsAdmin, updateCategory);
+router.patch(
+  "/update-category/:categoryId",
+  checkIsAdmin,
+  categoryValidators,
+  categoryValidationHandler,
+  updateCategory
+);
 
 //create category
 router.post(

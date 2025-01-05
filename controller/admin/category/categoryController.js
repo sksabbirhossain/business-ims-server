@@ -88,26 +88,27 @@ const updateCategory = async (req, res) => {
       });
     }
 
-    const data = req.body;
+    const updateData = req.body;
 
     // If an image is uploaded, add its path to updateData
     if (req.file) {
-      data.picture = req.file.path;
+      updateData.picture = req.file.path;
     }
 
-    const updatedCategory = await Category.findByIdAndUpdate(
+    const updatedCategory = await Category.findOneAndUpdate(
       {
         _id: categoryId,
         storeInfo: req.store.storeId,
       },
-      data,
+      updateData,
       {
         new: true,
+        runValidators: true,
       }
     );
 
     //send the response
-    if (!updatedCategory) {
+    if (updatedCategory?._id) {
       res.json({
         data: updatedCategory,
       });
@@ -121,6 +122,7 @@ const updateCategory = async (req, res) => {
       });
     }
   } catch (err) {
+    // console.log(err)
     res.json({
       errors: {
         common: {
