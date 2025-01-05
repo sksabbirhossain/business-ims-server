@@ -46,6 +46,8 @@ app.use("/api/superadmin", storeRouter);
 
 //store admin routes
 app.use("/api/admin", storeAdminRouter);
+
+// category routes
 app.use("/api/admin", categoryRouter);
 
 //404 not found error handler

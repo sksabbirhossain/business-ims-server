@@ -4,6 +4,7 @@ const {
   createCategory,
   getCategories,
   getCategory,
+  updateCategory,
 } = require("../../../controller/admin/category/categoryController");
 const {
   categoryValidators,
@@ -14,8 +15,12 @@ const router = express.Router();
 
 //get all category
 router.get("/category-list", checkIsAdmin, getCategories);
+
 // get a category by categoryId
 router.get("/category/:categoryId", checkIsAdmin, getCategory);
+
+//update a category by categoryId
+router.patch("/category/:categoryId", checkIsAdmin, updateCategory);
 
 //create category
 router.post(
