@@ -4,7 +4,9 @@ const Category = require("../../../models/storeAdmin/categorySchema");
 const getCategories = async (req, res) => {
   try {
     //get category from database
-    const category = await Category.find().sort({ createdAt: 1 });
+    const category = await Category.find({ storeInfo: req.store.storeId }).sort(
+      { createdAt: 1 }
+    );
 
     //send the response
     if (category && category.length >= 0) {
@@ -172,9 +174,47 @@ const createCategory = async (req, res) => {
   }
 };
 
+//delete a category by category id
+const deleteCategory = async (req, res) => {
+  try {
+    const { categoryId } = req.params || {};
+
+    const deletedCategory = await Category.findByIdAndDelete({
+      _id: categoryId,
+      storeInfo: req.store.storeId,
+    });
+
+    //send the response
+    if (deletedCategory) {
+      res.status(200).json({
+        status: 200,
+        msg: "Category deleted successful!",
+      });
+    } else {
+      res.status(404).json({
+        errors: {
+          common: {
+            msg: "Unknown error occured!",
+          },
+        },
+      });
+    }
+  } catch (err) {
+    // console.log(err)
+    res.json({
+      errors: {
+        common: {
+          msg: err.message,
+        },
+      },
+    });
+  }
+};
+
 module.exports = {
   getCategories,
   getCategory,
   updateCategory,
   createCategory,
+  deleteCategory,
 };

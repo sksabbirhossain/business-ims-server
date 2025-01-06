@@ -5,6 +5,7 @@ const {
   getCategories,
   getCategory,
   updateCategory,
+  deleteCategory,
 } = require("../../../controller/admin/category/categoryController");
 const {
   categoryValidators,
@@ -36,5 +37,8 @@ router.post(
   categoryValidationHandler,
   createCategory
 );
+
+// delete a category by categoryId
+router.delete("/delete-category/:categoryId", checkIsAdmin, deleteCategory);
 
 module.exports = router;
