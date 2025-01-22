@@ -8,12 +8,12 @@ const supplierSchema = mongoose.Schema(
       lowercase: true,
       trim: true,
     },
-    storeName: {
+    shopName: {
       type: String,
       lowercase: true,
       trim: true,
     },
-    website: {
+    description: {
       type: String,
       lowercase: true,
       trim: true,
@@ -27,6 +27,10 @@ const supplierSchema = mongoose.Schema(
     phone: {
       type: String,
       required: true,
+      trim: true,
+    },
+    website: {
+      type: String,
       lowercase: true,
       trim: true,
     },
@@ -35,6 +39,17 @@ const supplierSchema = mongoose.Schema(
       required: true,
       lowercase: true,
       trim: true,
+    },
+    picture: {
+      type: String,
+    },
+    picture_info: {
+      public_key: String,
+    },
+    storeInfo: {
+      type: mongoose.Types.ObjectId,
+      ref: "Store",
+      required: true,
     },
   },
   { timestamps: true }

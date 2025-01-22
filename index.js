@@ -15,6 +15,7 @@ const {
 const storeRouter = require("./routes/superAdmin/stores/storeRouter");
 const storeAdminRouter = require("./routes/admin/store/storeAdminRouter");
 const categoryRouter = require("./routes/admin/category/categoryRouter");
+const supplierRouter = require("./routes/admin/supplier/supplierRouter");
 
 //initialize app
 const app = express();
@@ -49,6 +50,9 @@ app.use("/api/admin", storeAdminRouter);
 
 // category routes
 app.use("/api/admin", categoryRouter);
+
+// supplier routes
+app.use("/api/admin", supplierRouter);
 
 //404 not found error handler
 app.use(notFoundHandler);

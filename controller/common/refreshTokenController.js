@@ -13,7 +13,9 @@ const checkUser = async (req, res) => {
       const userInfo = {
         picture_info: decoded?.picture_info,
         _id: decoded?._id,
-        name: decoded?.name,
+        storeName: decoded?.storeName,
+        ownerName: decoded?.ownerName,
+        phone: decoded?.phone,
         email: decoded?.email,
         role: decoded?.role,
         createdAt: decoded?.createdAt,
