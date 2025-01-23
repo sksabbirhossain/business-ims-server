@@ -11,11 +11,13 @@ const supplierSchema = mongoose.Schema(
     shopName: {
       type: String,
       lowercase: true,
+      required: true,
       trim: true,
     },
     description: {
       type: String,
       lowercase: true,
+      required: true,
       trim: true,
     },
     email: {
