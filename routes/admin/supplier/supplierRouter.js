@@ -1,6 +1,7 @@
 const express = require("express");
 const {
   createSupplier,
+  suppliers,
 } = require("../../../controller/admin/supplier/supplierController");
 const checkIsAdmin = require("../../../middleware/common/admin/checkIsAdmin");
 const {
@@ -9,6 +10,9 @@ const {
 } = require("../../../validators/admin/supplier/supplierValidators");
 
 const router = express.Router();
+
+//get all supplier
+router.get("/suppliers", checkIsAdmin, suppliers);
 
 //create a supplier
 router.post(

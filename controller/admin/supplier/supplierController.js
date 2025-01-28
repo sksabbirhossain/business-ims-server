@@ -1,5 +1,36 @@
 const Supplier = require("../../../models/storeAdmin/supplierSchema");
 
+//get suppliers
+const suppliers = async (req, res) => {
+  try {
+    //get suppliers
+    const suppliers = await Supplier.find({ storeInfo: req.store?.storeId });
+
+    //send the response
+    if (suppliers && suppliers[0]._id) {
+      res.json({
+        data: suppliers,
+      });
+    } else {
+      res.json({
+        errors: {
+          common: {
+            msg: "Unknown error occured!",
+          },
+        },
+      });
+    }
+  } catch (err) {
+    res.json({
+      errors: {
+        common: {
+          msg: err.message,
+        },
+      },
+    });
+  }
+};
+
 //create a supplier
 const createSupplier = async (req, res) => {
   try {
@@ -40,5 +71,6 @@ const createSupplier = async (req, res) => {
 };
 
 module.exports = {
+  suppliers,
   createSupplier,
 };
