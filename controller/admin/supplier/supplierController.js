@@ -105,8 +105,57 @@ const createSupplier = async (req, res) => {
   }
 };
 
+//update a supplier by supplier id
+const updateSupplier = async (req, res) => {
+  try {
+    //get supplier id
+    const supplierId = req.params.supplierId;
+    //make supplier object
+    const newSupplier = new Supplier({
+      ...req.body,
+      picture: null,
+      storeInfo: req.store?.storeId,
+    });
+
+    //save supplier in database
+    const supplier = await Supplier.findOneAndUpdate(
+      {
+        _id: supplierId,
+        storeInfo: req.store.storeId,
+      },
+      { ...req.body },
+      { new: true }
+    );
+
+    //send the response
+    if (supplier && supplier._id) {
+      res.json({
+        data: supplier,
+        msg: "Supplier was update successful!",
+      });
+    } else {
+      res.json({
+        errors: {
+          common: {
+            msg: "Unknown error occured!",
+          },
+        },
+      });
+    }
+  } catch (err) {
+    res.json({
+      errors: {
+        common: {
+          msg: err.message,
+        },
+      },
+    });
+  }
+};
+
 module.exports = {
   suppliers,
   getSupplier,
   createSupplier,
+  updateSupplier,
 };
