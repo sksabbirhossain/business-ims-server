@@ -4,6 +4,7 @@ const {
   suppliers,
   getSupplier,
   updateSupplier,
+  deleteSupplier,
 } = require("../../../controller/admin/supplier/supplierController");
 const checkIsAdmin = require("../../../middleware/common/admin/checkIsAdmin");
 const {
@@ -36,5 +37,8 @@ router.post(
   supplierValidationHandler,
   createSupplier
 );
+
+//delete a supplier
+router.delete("/delete-supplier/:supplierId", checkIsAdmin, deleteSupplier);
 
 module.exports = router;

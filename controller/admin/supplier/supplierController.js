@@ -7,7 +7,7 @@ const suppliers = async (req, res) => {
     const suppliers = await Supplier.find({ storeInfo: req.store?.storeId });
 
     //send the response
-    if (suppliers && suppliers[0]._id) {
+    if (suppliers) {
       res.json({
         data: suppliers,
       });
@@ -110,12 +110,6 @@ const updateSupplier = async (req, res) => {
   try {
     //get supplier id
     const supplierId = req.params.supplierId;
-    //make supplier object
-    const newSupplier = new Supplier({
-      ...req.body,
-      picture: null,
-      storeInfo: req.store?.storeId,
-    });
 
     //save supplier in database
     const supplier = await Supplier.findOneAndUpdate(
@@ -153,9 +147,48 @@ const updateSupplier = async (req, res) => {
   }
 };
 
+//update a supplier by supplier id
+const deleteSupplier = async (req, res) => {
+  try {
+    //get supplier id
+    const supplierId = req.params.supplierId;
+
+    //save supplier in database
+    const supplier = await Supplier.findByIdAndDelete({
+      _id: supplierId,
+      storeInfo: req.store.storeId,
+    });
+
+    //send the response
+    if (supplier && supplier._id) {
+      res.json({
+        data: supplier,
+        msg: "Supplier was Delete successful!",
+      });
+    } else {
+      res.json({
+        errors: {
+          common: {
+            msg: "Unknown error occured!",
+          },
+        },
+      });
+    }
+  } catch (err) {
+    res.json({
+      errors: {
+        common: {
+          msg: err.message,
+        },
+      },
+    });
+  }
+};
+
 module.exports = {
   suppliers,
   getSupplier,
   createSupplier,
   updateSupplier,
+  deleteSupplier,
 };
