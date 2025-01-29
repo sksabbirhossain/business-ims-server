@@ -31,6 +31,41 @@ const suppliers = async (req, res) => {
   }
 };
 
+//get suppliers
+const getSupplier = async (req, res) => {
+  try {
+    const supplierId = req.params.supplierId;
+    //get suppliers
+    const supplier = await Supplier.findOne({
+      _id: supplierId,
+      storeInfo: req.store?.storeId,
+    });
+
+    //send the response
+    if (supplier && supplier._id) {
+      res.json({
+        data: supplier,
+      });
+    } else {
+      res.json({
+        errors: {
+          common: {
+            msg: "Unknown error occured!",
+          },
+        },
+      });
+    }
+  } catch (err) {
+    res.json({
+      errors: {
+        common: {
+          msg: err.message,
+        },
+      },
+    });
+  }
+};
+
 //create a supplier
 const createSupplier = async (req, res) => {
   try {
@@ -72,5 +107,6 @@ const createSupplier = async (req, res) => {
 
 module.exports = {
   suppliers,
+  getSupplier,
   createSupplier,
 };
