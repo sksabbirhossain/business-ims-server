@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const purchaseSchema = mongoose.Schema(
+const stockSchema = mongoose.Schema(
   {
     name: {
       type: String,
@@ -74,6 +74,6 @@ const purchaseSchema = mongoose.Schema(
   { timestamps: true }
 );
 
-const Purchase = mongoose.model("Purchase", purchaseSchema);
+const Stock = mongoose.model("Stock", stockSchema);
 
-module.exports = Purchase;
+module.exports = Stock;
