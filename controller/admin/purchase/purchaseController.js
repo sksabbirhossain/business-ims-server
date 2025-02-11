@@ -1,5 +1,38 @@
 const Purchase = require("../../../models/storeAdmin/purchaseSchema");
 
+//get all purchase
+const getPurchases = async (req, res) => {
+  try {
+    //get category from database
+    const purchase = await Purchase.find({ storeInfo: req.store.storeId }).sort(
+      { createdAt: 1 }
+    );
+
+    //send the response
+    if (purchase && purchase.length >= 0) {
+      res.json({
+        data: purchase,
+      });
+    } else {
+      res.json({
+        errors: {
+          common: {
+            msg: "Unknown error occured!",
+          },
+        },
+      });
+    }
+  } catch (err) {
+    res.json({
+      errors: {
+        common: {
+          msg: "Unknown error occured!",
+        },
+      },
+    });
+  }
+};
+
 //create purchase
 const createPurchase = async (req, res) => {
   try {
@@ -41,5 +74,6 @@ const createPurchase = async (req, res) => {
 };
 
 module.exports = {
+  getPurchases,
   createPurchase,
 };
