@@ -60,11 +60,11 @@ const purchaseSchema = mongoose.Schema(
       type: Boolean,
       default: true,
     },
-    UOM: {
+    uom: {
       type: String,
       enum: ["KG", "PICES", "LITER"],
       required: true,
-      uppercase: ture,
+      uppercase: true,
     },
     picture: String,
     picture_info: {

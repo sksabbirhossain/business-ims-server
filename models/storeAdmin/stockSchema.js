@@ -64,7 +64,7 @@ const stockSchema = mongoose.Schema(
       type: String,
       enum: ["KG", "PICES", "LITER"],
       required: true,
-      uppercase: ture,
+      uppercase: true,
     },
     picture: String,
     picture_info: {
