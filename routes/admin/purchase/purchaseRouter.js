@@ -4,6 +4,7 @@ const checkIsAdmin = require("../../../middleware/common/admin/checkIsAdmin");
 const {
   createPurchase,
   getPurchases,
+  getPurchase,
 } = require("../../../controller/admin/purchase/purchaseController");
 const {
   purchaseValidators,
@@ -14,6 +15,9 @@ const router = express.Router();
 
 //get all purchase
 router.get("/all", checkIsAdmin, getPurchases);
+
+//get a purchase
+router.get("/:purchaseId", checkIsAdmin, getPurchase);
 
 //create a purchase
 router.post(

@@ -33,6 +33,41 @@ const getPurchases = async (req, res) => {
   }
 };
 
+//get a purchase
+const getPurchase = async (req, res) => {
+  try {
+    const purchaseId = req.params.purchaseId;
+    //get category from database
+    const purchase = await Purchase.findOne({
+      storeInfo: req.store.storeId,
+      _id: purchaseId,
+    });
+
+    //send the response
+    if (purchase && purchase?._id) {
+      res.json({
+        data: purchase,
+      });
+    } else {
+      res.json({
+        errors: {
+          common: {
+            msg: "Unknown error occured!",
+          },
+        },
+      });
+    }
+  } catch (err) {
+    res.json({
+      errors: {
+        common: {
+          msg: "Unknown error occured!",
+        },
+      },
+    });
+  }
+};
+
 //create purchase
 const createPurchase = async (req, res) => {
   try {
@@ -75,5 +110,6 @@ const createPurchase = async (req, res) => {
 
 module.exports = {
   getPurchases,
+  getPurchase,
   createPurchase,
 };
