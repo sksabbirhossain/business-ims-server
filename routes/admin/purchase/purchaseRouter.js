@@ -5,6 +5,7 @@ const {
   createPurchase,
   getPurchases,
   getPurchase,
+  updatePurchase,
 } = require("../../../controller/admin/purchase/purchaseController");
 const {
   purchaseValidators,
@@ -26,6 +27,15 @@ router.post(
   purchaseValidators,
   purchaseValidationHandler,
   createPurchase
+);
+
+//update a purchase by id
+router.patch(
+  "/update/:purchaseId",
+  checkIsAdmin,
+  purchaseValidators,
+  purchaseValidationHandler,
+  updatePurchase
 );
 
 module.exports = router;

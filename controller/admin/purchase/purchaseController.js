@@ -108,8 +108,51 @@ const createPurchase = async (req, res) => {
   }
 };
 
+//update purchase by id
+const updatePurchase = async (req, res) => {
+  try {
+    //get purchase id
+    const purchaseId = req.params.purchaseId;
+
+    //update purchase
+    const purchase = await Purchase.findOneAndUpdate(
+      {
+        _id: purchaseId,
+        storeInfo: req.store.storeId,
+      },
+      { ...req.body },
+      { new: true }
+    );
+
+    //send the response
+    if (purchase && purchase._id) {
+      res.json({
+        data: purchase,
+        msg: "Purchase was update successful!",
+      });
+    } else {
+      res.json({
+        errors: {
+          common: {
+            msg: "Unknown error occured!",
+          },
+        },
+      });
+    }
+  } catch (err) {
+    res.json({
+      errors: {
+        common: {
+          msg: "Unknown error occured!",
+        },
+      },
+    });
+  }
+};
+
 module.exports = {
   getPurchases,
   getPurchase,
   createPurchase,
+  updatePurchase,
 };
