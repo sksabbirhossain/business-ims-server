@@ -6,6 +6,7 @@ const {
   getPurchases,
   getPurchase,
   updatePurchase,
+  deletePurchase,
 } = require("../../../controller/admin/purchase/purchaseController");
 const {
   purchaseValidators,
@@ -37,5 +38,8 @@ router.patch(
   purchaseValidationHandler,
   updatePurchase
 );
+
+//delete a purchase by id
+router.delete("/delete/:purchaseId", checkIsAdmin, deletePurchase);
 
 module.exports = router;

@@ -4,9 +4,9 @@ const Purchase = require("../../../models/storeAdmin/purchaseSchema");
 const getPurchases = async (req, res) => {
   try {
     //get category from database
-    const purchase = await Purchase.find({ storeInfo: req.store.storeId }).sort(
-      { createdAt: 1 }
-    );
+    const purchase = await Purchase.find({ storeInfo: req.store.storeId })
+      .sort({ createdAt: 1 })
+      .populate("supplierInfo");
 
     //send the response
     if (purchase && purchase.length >= 0) {
@@ -150,9 +150,48 @@ const updatePurchase = async (req, res) => {
   }
 };
 
+//delete purchase by id
+const deletePurchase = async (req, res) => {
+  try {
+    //get purchase id
+    const purchaseId = req.params.purchaseId;
+
+    //delete purchase
+    const purchase = await Purchase.findOneAndDelete({
+      _id: purchaseId,
+      storeInfo: req.store.storeId,
+    });
+
+    //send the response
+    if (purchase && purchase._id) {
+      res.json({
+        data: purchase,
+        msg: "Purchase was delete successful!",
+      });
+    } else {
+      res.json({
+        errors: {
+          common: {
+            msg: "Unknown error occured!",
+          },
+        },
+      });
+    }
+  } catch (err) {
+    res.json({
+      errors: {
+        common: {
+          msg: "Unknown error occured!",
+        },
+      },
+    });
+  }
+};
+
 module.exports = {
   getPurchases,
   getPurchase,
   createPurchase,
   updatePurchase,
+  deletePurchase,
 };
