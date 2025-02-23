@@ -1,11 +1,35 @@
 const Stock = require("../../../models/storeAdmin/stockSchema");
 
+//get all stock
 const getStocks = async (req, res) => {
   try {
-    const stocks = await Stock.find();
-    res.status(200).json({ stocks });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
+    //get category from database
+    const stocks = await Stock.find({ storeInfo: req.store.storeId })
+      .sort({ createdAt: 1 })
+      .populate("supplierInfo");
+
+    //send the response
+    if (stocks && stocks.length >= 0) {
+      res.json({
+        data: stocks,
+      });
+    } else {
+      res.json({
+        errors: {
+          common: {
+            msg: "Unknown error occured!",
+          },
+        },
+      });
+    }
+  } catch (err) {
+    res.json({
+      errors: {
+        common: {
+          msg: "Unknown error occured!",
+        },
+      },
+    });
   }
 };
 
@@ -18,14 +42,42 @@ const getStock = async (req, res) => {
   }
 };
 
+//create a stock
 const createStock = async (req, res) => {
-  const stock = req.body;
-  const newStock = new Stock(stock);
   try {
-    await newStock.save();
-    res.status(201).json({ newStock });
-  } catch (error) {
-    res.status(409).json({ message: error.message });
+    //make user object
+    const newStock = new Stock({
+      ...req.body,
+      picture: null,
+      storeInfo: req.store?.storeId,
+    });
+
+    //save stock in database
+    const stock = await newStock.save();
+
+    //send the response
+    if (stock && stock?._id) {
+      res.json({
+        data: stock,
+        msg: "Stock was create successful!",
+      });
+    } else {
+      res.json({
+        errors: {
+          common: {
+            msg: "Unknown error occured!",
+          },
+        },
+      });
+    }
+  } catch (err) {
+    res.json({
+      errors: {
+        common: {
+          msg: "Unknown error occured!",
+        },
+      },
+    });
   }
 };
 
@@ -50,4 +102,10 @@ const deleteStock = async (req, res) => {
   res.json({ message: "Stock deleted successfully" });
 };
 
-module.exports = { getStocks, getStock, createStock, updateStock, deleteStock };
+module.exports = {
+  getStocks,
+  getStock,
+  createStock,
+  updateStock,
+  deleteStock,
+};
