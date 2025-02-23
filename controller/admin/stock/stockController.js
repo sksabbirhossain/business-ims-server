@@ -33,12 +33,38 @@ const getStocks = async (req, res) => {
   }
 };
 
+//get a stock
 const getStock = async (req, res) => {
   try {
-    const stock = await Stock.findById(req.params.stockId);
-    res.status(200).json({ stock });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
+    const stockId = req.params.stockId;
+    //get stock from database
+    const stock = await Stock.findOne({
+      storeInfo: req.store.storeId,
+      _id: stockId,
+    });
+
+    //send the response
+    if (stock && stock?._id) {
+      res.json({
+        data: stock,
+      });
+    } else {
+      res.json({
+        errors: {
+          common: {
+            msg: "Unknown error occured!",
+          },
+        },
+      });
+    }
+  } catch (err) {
+    res.json({
+      errors: {
+        common: {
+          msg: "Unknown error occured!",
+        },
+      },
+    });
   }
 };
 
