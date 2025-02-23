@@ -110,10 +110,10 @@ const createStock = async (req, res) => {
 //update a stock by id
 const updateStock = async (req, res) => {
   try {
-    //get purchase id
+    //get stock id
     const stockId = req.params.stockId;
 
-    //update purchase
+    //update stock
     const stock = await Stock.findOneAndUpdate(
       {
         _id: stockId,
@@ -149,12 +149,42 @@ const updateStock = async (req, res) => {
   }
 };
 
+//delete a stock by id
 const deleteStock = async (req, res) => {
-  const { stockId: _id } = req.params;
-  if (!mongoose.Types.ObjectId.isValid(_id))
-    return res.status(404).send("No stock with that id");
-  await Stock.findByIdAndRemove(_id);
-  res.json({ message: "Stock deleted successfully" });
+  try {
+    //get stock id
+    const stockId = req.params.stockId;
+
+    //delete stock
+    const stock = await Stock.findOneAndDelete({
+      _id: stockId,
+      storeInfo: req.store.storeId,
+    });
+
+    //send the response
+    if (stock && stock._id) {
+      res.json({
+        data: stock,
+        msg: "Stock was delete successful!",
+      });
+    } else {
+      res.json({
+        errors: {
+          common: {
+            msg: "Unknown error occured!",
+          },
+        },
+      });
+    }
+  } catch (err) {
+    res.json({
+      errors: {
+        common: {
+          msg: "Unknown error occured!",
+        },
+      },
+    });
+  }
 };
 
 module.exports = {
