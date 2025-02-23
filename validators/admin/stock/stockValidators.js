@@ -18,6 +18,10 @@ const stockValidators = [
     .withMessage("Description must-be 10 characters")
     .trim(),
 
+  check("uom").notEmpty().withMessage("Unit of Measure is required"),
+
+  check("category").notEmpty().withMessage("Category is required"),
+
   check("purchasePrice")
     .notEmpty()
     .withMessage("Purchase Price is required")
@@ -35,8 +39,6 @@ const stockValidators = [
     .withMessage("Quantity Price is required")
     .isInt({ min: 1 })
     .withMessage("Quantity must more than 0"),
-
-  check("category").notEmpty().withMessage("Category is required"),
 
   check("supplierInfo").notEmpty().withMessage("Supplier is required"),
 ];
