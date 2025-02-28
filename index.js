@@ -59,7 +59,7 @@ app.use("/api/admin", supplierRouter);
 //purchase routes
 app.use("/api/admin/purchase", purchaseRouter);
 
-//purchase routes
+//stock routes
 app.use("/api/admin/stock", stockRouter);
 
 //404 not found error handler

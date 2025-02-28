@@ -41,7 +41,7 @@ const getPurchase = async (req, res) => {
     const purchase = await Purchase.findOne({
       storeInfo: req.store.storeId,
       _id: purchaseId,
-    });
+    }).populate(["supplierInfo", "category", "storeInfo"]);
 
     //send the response
     if (purchase && purchase?._id) {

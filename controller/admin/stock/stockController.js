@@ -41,7 +41,7 @@ const getStock = async (req, res) => {
     const stock = await Stock.findOne({
       storeInfo: req.store.storeId,
       _id: stockId,
-    });
+    }).populate(["supplierInfo", "category", "storeInfo"]);
 
     //send the response
     if (stock && stock?._id) {
