@@ -68,6 +68,47 @@ const getStock = async (req, res) => {
   }
 };
 
+//search a stock
+const searchStock = async (req, res) => {
+  try {
+    console.log("hi");
+    //get search query
+    const search = req.query?.name;
+
+    //get stock from database
+    const stocks = await Stock.find({
+      storeInfo: req.store.storeId,
+      $or: [{ name: { $regex: search, $options: "i" } }],
+    })
+      .populate(["supplierInfo", "category"])
+      .limit(10);
+
+    //send the response
+    if (stocks && stocks.length >= 0) {
+      res.json({
+        data: stocks,
+      });
+    } else {
+      res.json({
+        errors: {
+          common: {
+            msg: "Unknown error occured!",
+          },
+        },
+      });
+    }
+  } catch (err) {
+    console.log(err);
+    res.json({
+      errors: {
+        common: {
+          msg: "Unknown error occured!",
+        },
+      },
+    });
+  }
+};
+
 //create a stock
 const createStock = async (req, res) => {
   try {
@@ -190,6 +231,7 @@ const deleteStock = async (req, res) => {
 module.exports = {
   getStocks,
   getStock,
+  searchStock,
   createStock,
   updateStock,
   deleteStock,

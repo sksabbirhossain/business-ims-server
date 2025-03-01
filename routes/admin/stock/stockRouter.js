@@ -7,6 +7,7 @@ const {
   getStock,
   updateStock,
   deleteStock,
+  searchStock,
 } = require("../../../controller/admin/stock/stockController");
 const {
   stockValidators,
@@ -14,6 +15,9 @@ const {
 } = require("../../../validators/admin/stock/stockValidators");
 
 const router = express.Router();
+
+//search a stock
+router.get("/search", checkIsAdmin, searchStock);
 
 //get all stock
 router.get("/all", checkIsAdmin, getStocks);
