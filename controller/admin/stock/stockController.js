@@ -71,7 +71,6 @@ const getStock = async (req, res) => {
 //search a stock
 const searchStock = async (req, res) => {
   try {
-    console.log("hi");
     //get search query
     const search = req.query?.name;
 
