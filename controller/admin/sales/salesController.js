@@ -1,9 +1,39 @@
 const Sales = require("../../../models/storeAdmin/salesSchema");
 
+//get all sales
+const getAllSales = async (req, res) => {
+  try {
+    //get all sales
+    const sales = await Sales.find({ storeInfo: req.store?.storeId });
+
+    //send the response
+    if (sales) {
+      res.json({
+        data: sales,
+      });
+    } else {
+      res.json({
+        errors: {
+          common: {
+            msg: "Unknown error occured!",
+          },
+        },
+      });
+    }
+  } catch (err) {
+    res.json({
+      errors: {
+        common: {
+          msg: err.message,
+        },
+      },
+    });
+  }
+};
+
 //create sales payment
 const createSalesPayment = async (req, res) => {
   try {
-    console.log(req.body.cart);
     //create sales payment
     const salesPayment = new Sales({
       ...req.body,
@@ -40,5 +70,6 @@ const createSalesPayment = async (req, res) => {
 };
 
 module.exports = {
+  getAllSales,
   createSalesPayment,
 };

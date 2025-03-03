@@ -64,7 +64,7 @@ app.use("/api/admin/purchase", purchaseRouter);
 app.use("/api/admin/stock", stockRouter);
 
 //sales routes
-app.use("/api/admin/sales", salesRouter);
+app.use("/api/admin/sale", salesRouter);
 
 //404 not found error handler
 app.use(notFoundHandler);
