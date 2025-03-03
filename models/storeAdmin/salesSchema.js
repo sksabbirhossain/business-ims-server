@@ -1,54 +1,101 @@
 const mongoose = require("mongoose");
+const Stock = require("./stockSchema");
 
-const SalesSchema = new mongoose.Schema({
-  customer: {
-    type: mongoose.Schema.Types.Mixed, // Can be an ObjectId (reference) or an embedded object
-    required: true,
-  },
-  cart: [
-    {
-      product: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Stock",
-        required: true,
-      },
-      qty: {
-        type: Number,
-        required: true,
-      },
-      price: {
-        type: Number,
-        required: true,
+const SalesSchema = new mongoose.Schema(
+  {
+    customer: {
+      type: mongoose.Schema.Types.Mixed,
+      required: true,
+      validate: {
+        validator: function (value) {
+          return (
+            (typeof value === "object" && value.name) || // Manual entry
+            mongoose.isValidObjectId(value) // Reference to Customer model
+          );
+        },
+        message:
+          "Customer must be an existing reference or a valid manual entry.",
       },
     },
-  ],
-  discount: {
-    type: Number,
-    required: true,
+    cart: {
+      type: [
+        {
+          product: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Stock",
+            required: true,
+          },
+          qty: {
+            type: Number,
+            required: true,
+          },
+          price: {
+            type: Number,
+            required: true,
+          },
+        },
+      ],
+      required: true,
+      validate: [arrayLimit, "Cart cannot be empty"],
+    },
+    discount: {
+      type: Number,
+      required: true,
+    },
+    totalPrice: {
+      type: Number,
+      required: true,
+    },
+    subTotal: {
+      type: Number,
+      required: true,
+    },
+    paymentStatus: {
+      type: String,
+      enum: ["Pending", "Completed", "Failed"],
+      default: "Completed",
+    },
+    paymentMethod: {
+      type: String,
+      enum: ["Cash", "Credit Card", "Online"],
+      default: "Cash",
+    },
+    storeInfo: {
+      type: mongoose.Types.ObjectId,
+      ref: "Store",
+      required: true,
+    },
   },
-  totalAmount: {
-    type: Number,
-    required: true,
-  },
-  paymentStatus: {
-    type: String,
-    enum: ["Pending", "Completed", "Failed"],
-    default: "Pending",
-  },
-  paymentMethod: {
-    type: String,
-    enum: ["Cash", "Credit Card", "Online"],
-    required: true,
-  },
-  saleDate: { type: Date, default: Date.now },
+  { timestamps: true }
+);
+
+// Custom validation to ensure the cart is not empty
+function arrayLimit(val) {
+  return val.length > 0;
+}
+
+// **Reduce stock when a sale is created**
+SalesSchema.pre("save", async function (next) {
+  try {
+    for (const item of this.cart) {
+      const product = await Stock.findById(item.product);
+      if (!product) {
+        throw new Error(`Product with ID ${item.product} not found`);
+      }
+
+      if (product.quantity < item.qty) {
+        throw new Error(`Not enough stock for ${product.name}`);
+      }
+
+      product.quantity -= item.qty; // Reduce stock
+      await product.save(); // Update the product stock in the database
+    }
+    next();
+  } catch (error) {
+    next(error);
+  }
 });
 
-// Handle customer input dynamically
-SalesSchema.path("customer").validate(function (value) {
-  return (
-    (typeof value === "object" && value.name && value.email) || // Manual entry
-    mongoose.isValidObjectId(value) // Reference to Customer model
-  );
-}, "Customer must be an existing reference or a valid manual entry.");
+const Sales = mongoose.model("Sales", SalesSchema);
 
-module.exports = mongoose.model("Sale", SalesSchema);
+module.exports = Sales;
