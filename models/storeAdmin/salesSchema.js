@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Stock = require("./stockSchema");
+const generateTrxId = require("../../utils/generateTrxId");
 
 const SalesSchema = new mongoose.Schema(
   {
@@ -64,6 +65,12 @@ const SalesSchema = new mongoose.Schema(
       type: mongoose.Types.ObjectId,
       ref: "Store",
       required: true,
+    },
+    trxid: {
+      type: String,
+      required: true,
+      unique: true,
+      default: generateTrxId,
     },
   },
   { timestamps: true }
