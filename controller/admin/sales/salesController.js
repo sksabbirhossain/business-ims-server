@@ -31,6 +31,43 @@ const getAllSales = async (req, res) => {
   }
 };
 
+//get a single sales
+const getSale = async (req, res) => {
+  try {
+    //get sales id
+    const salesId = req.params.salesId;
+
+    //get all sales
+    const sale = await Sales.findOne({
+      _id: salesId,
+      storeInfo: req.store?.storeId,
+    }).populate("cart.product");
+
+    //send the response
+    if (sale) {
+      res.json({
+        data: sale,
+      });
+    } else {
+      res.json({
+        errors: {
+          common: {
+            msg: "Unknown error occured!",
+          },
+        },
+      });
+    }
+  } catch (err) {
+    res.json({
+      errors: {
+        common: {
+          msg: err.message,
+        },
+      },
+    });
+  }
+};
+
 //create sales payment
 const createSalesPayment = async (req, res) => {
   try {
@@ -69,7 +106,47 @@ const createSalesPayment = async (req, res) => {
   }
 };
 
+//delete sales by id
+const deleteSale = async (req, res) => {
+  try {
+    //get sales id
+    const salesId = req.params.salesId;
+
+    //delete sales
+    const sales = await Sales.findOneAndDelete({
+      _id: salesId,
+      storeInfo: req.store?.storeId,
+    });
+
+    //send the response
+    if (sales) {
+      res.json({
+        data: sales,
+        msg: "Sales was deleted successful!",
+      });
+    } else {
+      res.json({
+        errors: {
+          common: {
+            msg: "Unknown error occured!",
+          },
+        },
+      });
+    }
+  } catch (err) {
+    res.json({
+      errors: {
+        common: {
+          msg: err.message,
+        },
+      },
+    });
+  }
+};
+
 module.exports = {
   getAllSales,
+  getSale,
   createSalesPayment,
+  deleteSale,
 };
