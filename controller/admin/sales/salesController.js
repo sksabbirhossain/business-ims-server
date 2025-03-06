@@ -31,6 +31,39 @@ const getAllSales = async (req, res) => {
   }
 };
 
+//search sales by trxid
+const searchSalesByTrxId = async (req, res) => {
+  try {
+    //get trxid
+    const trxid = req.query.trxId;
+
+    //search sales by trxid
+    const sales = await Sales.findOne({
+      trxid: trxid,
+      storeInfo: req.store?.storeId,
+    }).populate("cart.product");
+
+    //send the response
+    if (sales) {
+      res.json({
+        data: sales,
+      });
+    } else {
+      res.json({
+        data: [],
+      });
+    }
+  } catch (err) {
+    res.json({
+      errors: {
+        common: {
+          msg: err.message,
+        },
+      },
+    });
+  }
+};
+
 //get a single sales
 const getSale = async (req, res) => {
   try {
@@ -146,6 +179,7 @@ const deleteSale = async (req, res) => {
 
 module.exports = {
   getAllSales,
+  searchSalesByTrxId,
   getSale,
   createSalesPayment,
   deleteSale,
