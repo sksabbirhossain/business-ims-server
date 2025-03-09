@@ -19,6 +19,7 @@ const supplierRouter = require("./routes/admin/supplier/supplierRouter");
 const purchaseRouter = require("./routes/admin/purchase/purchaseRouter");
 const stockRouter = require("./routes/admin/stock/stockRouter");
 const salesRouter = require("./routes/admin/sales/salesRouter");
+const returnSaleRouter = require("./routes/admin/returnSale/returnSaleRouter");
 
 //initialize app
 const app = express();
@@ -65,6 +66,9 @@ app.use("/api/admin/stock", stockRouter);
 
 //sales routes
 app.use("/api/admin/sale", salesRouter);
+
+//return sale routes
+app.use("/api/admin/return-sale", returnSaleRouter);
 
 //404 not found error handler
 app.use(notFoundHandler);
