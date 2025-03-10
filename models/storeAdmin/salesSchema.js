@@ -37,7 +37,18 @@ const SalesSchema = new mongoose.Schema(
         },
       ],
       required: true,
-      validate: [arrayLimit, "Cart cannot be empty"],
+
+      validate: {
+        validator: function (val) {
+          // Allow empty cart only if the sale has at least one return entry
+          return val.length > 0 || this.hasReturns;
+        },
+        message: "Cart cannot be empty unless a return is processed.",
+      },
+    },
+    hasReturns: {
+      type: Boolean,
+      default: false,
     },
     discount: {
       type: Number,
@@ -75,11 +86,6 @@ const SalesSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-
-// Custom validation to ensure the cart is not empty
-function arrayLimit(val) {
-  return val.length > 0;
-}
 
 // **Reduce stock when a sale is created**
 SalesSchema.pre("save", async function (next) {

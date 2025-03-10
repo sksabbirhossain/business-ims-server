@@ -6,12 +6,21 @@ const ReturnSaleSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    productId: {
+    product: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Stock",
       required: true,
     },
+    sales: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Sales",
+      required: true,
+    },
     qty: {
+      type: Number,
+      required: true,
+    },
+    price: {
       type: Number,
       required: true,
     },
