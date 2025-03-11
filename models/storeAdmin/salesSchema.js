@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const Stock = require("./stockSchema");
 const generateTrxId = require("../../utils/generateTrxId");
+const Financial = require("./financialSchema");
 
 const SalesSchema = new mongoose.Schema(
   {
@@ -103,6 +104,28 @@ SalesSchema.pre("save", async function (next) {
       product.quantity -= item.qty; // Reduce stock
       await product.save(); // Update the product stock in the database
     }
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
+
+//calculate financial when a sale is created
+SalesSchema.pre("save", async function (next) {
+  try {
+    const financial = await Financial.findOne({ storeInfo: this.storeInfo });
+
+    if (!financial) {
+      throw new Error("Financial record not found for this store");
+    }
+
+    let totalSalesRevenue = this.totalPrice;
+
+    financial.totalSalesRevenue += totalSalesRevenue;
+    financial.totalProfit +=
+      financial.totalSalesRevenue - financial.totalPurchaseCost;
+
+    await financial.save();
     next();
   } catch (error) {
     next(error);

@@ -20,6 +20,7 @@ const purchaseRouter = require("./routes/admin/purchase/purchaseRouter");
 const stockRouter = require("./routes/admin/stock/stockRouter");
 const salesRouter = require("./routes/admin/sales/salesRouter");
 const returnSaleRouter = require("./routes/admin/returnSale/returnSaleRouter");
+const financialRouter = require("./routes/admin/financial/financialRouter");
 
 //initialize app
 const app = express();
@@ -51,6 +52,9 @@ app.use("/api/superadmin", storeRouter);
 
 //store admin routes
 app.use("/api/admin", storeAdminRouter);
+
+//financial routes
+app.use("/api/admin/financial", financialRouter);
 
 // category routes
 app.use("/api/admin", categoryRouter);
