@@ -28,6 +28,10 @@ const financialsSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    totalDue: {
+      type: Number,
+      default: 0,
+    },
     lastUpdated: {
       type: Date,
       default: Date.now,

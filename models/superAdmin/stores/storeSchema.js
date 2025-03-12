@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const Financial = require("../../storeAdmin/financialSchema");
 
 const storeSchema = mongoose.Schema(
   {
@@ -60,6 +61,16 @@ const storeSchema = mongoose.Schema(
   },
   { timestamps: true }
 );
+
+// Middleware to create financial model after store creation
+storeSchema.post("save", async function (doc, next) {
+  try {
+    await Financial.create({ storeInfo: doc._id });
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
 
 const Store = mongoose.model("Store", storeSchema);
 

@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const Financial = require("./financialSchema");
 
 const purchaseSchema = mongoose.Schema(
   {
@@ -73,6 +74,67 @@ const purchaseSchema = mongoose.Schema(
   },
   { timestamps: true }
 );
+
+// Middleware to update financial model after purchase
+purchaseSchema.post("save", async function (doc, next) {
+  try {
+    const finance = await Financial.findOne({ storeInfo: doc.storeInfo });
+    finance.totalPurchaseCost += doc.purchasePrice;
+    await finance.save();
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Middleware to update financial model before delete purchase
+purchaseSchema.post("findOneAndDelete", async function (doc) {
+  try {
+    if (!doc) return;
+    const finance = await Financial.findOne({ storeInfo: doc.storeInfo });
+    if (!finance) return;
+    finance.totalPurchaseCost -= doc.purchasePrice;
+    await finance.save();
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+// Middleware to update financial model before updateing purchase
+purchaseSchema.pre("findOneAndUpdate", async function (next) {
+  try {
+    // Find the old purchase document before update
+    const oldPurchase = await this.model.findOne(this.getQuery());
+
+    if (!oldPurchase) {
+      return next(new Error("Purchase not found"));
+    }
+
+    // Get new purchase values from update operation
+    const updateData = this.getUpdate();
+    const newPurchasePrice =
+      updateData.purchasePrice || oldPurchase.purchasePrice; // If not updated, keep old value
+
+    // Calculate the price difference
+    const priceDifference = newPurchasePrice - oldPurchase.purchasePrice;
+
+    // Update the financial record
+    const finance = await Financial.findOne({
+      storeInfo: oldPurchase.storeInfo,
+    });
+
+    if (!finance) {
+      return next(new Error("Financial record not found"));
+    }
+
+    finance.totalPurchaseCost += priceDifference; // Adjust total purchase cost
+
+    await finance.save();
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
 
 const Purchase = mongoose.model("Purchase", purchaseSchema);
 
