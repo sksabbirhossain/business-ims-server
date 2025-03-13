@@ -80,6 +80,10 @@ purchaseSchema.post("save", async function (doc, next) {
   try {
     const finance = await Financial.findOne({ storeInfo: doc.storeInfo });
     finance.totalPurchaseCost += doc.purchasePrice;
+    //calculete profit
+    finance.totalProfit =
+      finance.totalSalesRevenue -
+      (finance.totalPurchaseCost + finance.totalExpenses);
     await finance.save();
     next();
   } catch (error) {
@@ -94,6 +98,12 @@ purchaseSchema.post("findOneAndDelete", async function (doc) {
     const finance = await Financial.findOne({ storeInfo: doc.storeInfo });
     if (!finance) return;
     finance.totalPurchaseCost -= doc.purchasePrice;
+
+    //calculete profit
+    finance.totalProfit =
+      finance.totalSalesRevenue -
+      (finance.totalPurchaseCost + finance.totalExpenses);
+
     await finance.save();
   } catch (error) {
     console.log(error);
@@ -128,6 +138,10 @@ purchaseSchema.pre("findOneAndUpdate", async function (next) {
     }
 
     finance.totalPurchaseCost += priceDifference; // Adjust total purchase cost
+    //calculete profit
+    finance.totalProfit =
+      finance.totalSalesRevenue -
+      (finance.totalPurchaseCost + finance.totalExpenses);
 
     await finance.save();
     next();
