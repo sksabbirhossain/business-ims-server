@@ -91,18 +91,20 @@ const SalesSchema = new mongoose.Schema(
 // **Reduce stock when a sale is created**
 SalesSchema.pre("save", async function (next) {
   try {
-    for (const item of this.cart) {
-      const product = await Stock.findById(item.product);
-      if (!product) {
-        throw new Error(`Product with ID ${item.product} not found`);
-      }
+    if (this.hasReturns === false) {
+      for (const item of this.cart) {
+        const product = await Stock.findById(item.product);
+        if (!product) {
+          throw new Error(`Product with ID ${item.product} not found`);
+        }
 
-      if (product.quantity < item.qty) {
-        throw new Error(`Not enough stock for ${product.name}`);
-      }
+        if (product.quantity < item.qty) {
+          throw new Error(`Not enough stock for ${product.name}`);
+        }
 
-      product.quantity -= item.qty; // Reduce stock
-      await product.save(); // Update the product stock in the database
+        product.quantity -= item.qty; // Reduce stock
+        await product.save(); // Update the product stock in the database
+      }
     }
     next();
   } catch (error) {
@@ -122,8 +124,10 @@ SalesSchema.pre("save", async function (next) {
     let totalSalesRevenue = this.totalPrice;
 
     financial.totalSalesRevenue += totalSalesRevenue;
-    financial.totalProfit +=
-      financial.totalSalesRevenue - financial.totalPurchaseCost;
+    //calculete profit
+    financial.totalProfit =
+      financial.totalSalesRevenue -
+      (financial.totalPurchaseCost + financial.totalExpenses);
 
     await financial.save();
     next();

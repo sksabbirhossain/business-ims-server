@@ -98,7 +98,8 @@ const createReturnSale = async (req, res) => {
         },
       });
     }
-    stockItem.quantity += qty;
+    stockItem.quantity += Number(qty);
+
     await stockItem.save();
 
     //update sales: decrease the sale cart product qty
@@ -127,8 +128,8 @@ const createReturnSale = async (req, res) => {
 
     //if return all products
     if (sales.cart.length === 0) {
-      sales.hasReturns = true;
     }
+    sales.hasReturns = true;
 
     await sales.save();
 
