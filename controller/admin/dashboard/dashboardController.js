@@ -8,12 +8,18 @@ const getPurchaseAndSales = async (req, res) => {
     last30Days.setDate(last30Days.getDate() - 12);
 
     // Fetch last 30 days of purchases
-    const purchases = await Purchase.find({ createdAt: { $gte: last30Days } })
+    const purchases = await Purchase.find({
+      storeInfo: req.store.storeId,
+      createdAt: { $gte: last30Days },
+    })
       .sort({ createdAt: 1 }) // Sort by ascending date
       .lean();
 
     // Fetch last 30 days of sales
-    const sales = await Sales.find({ createdAt: { $gte: last30Days } })
+    const sales = await Sales.find({
+      storeInfo: req.store.storeId,
+      createdAt: { $gte: last30Days },
+    })
       .sort({ createdAt: 1 }) // Sort by ascending date
       .lean();
 
@@ -57,6 +63,72 @@ const getPurchaseAndSales = async (req, res) => {
   }
 };
 
+//get last year buy and salse ammounts
+const lastYearBuyAndSales = async (req, res) => {
+  try {
+    const now = new Date();
+    const lastYear = new Date();
+    lastYear.setFullYear(now.getFullYear() - 1); // Subtract one year
+    lastYear.setMonth(now.getMonth()); // Keep the same month
+    lastYear.setDate(now.getDate()); // Keep the same day
+    lastYear.setHours(now.getHours()); // Keep the same hour
+    lastYear.setMinutes(now.getMinutes()); // Keep the same minute
+    lastYear.setSeconds(now.getSeconds()); // Keep the same second
+    lastYear.setMilliseconds(now.getMilliseconds()); // Keep the same milliseconds
+
+    // ✅ Set This Year's Date Dynamically (Today)
+    const thisYear = new Date();
+
+    //get last year totoal purchase
+    const purchases = await Purchase.find({
+      createdAt: {
+        $gte: lastYear,
+        $lte: thisYear,
+      },
+      storeInfo: req.store.storeId,
+    });
+
+    const totalPurchase = purchases.reduce(
+      (sum, purchase) => sum + purchase.purchasePrice,
+      0
+    );
+
+    //get last years total sales
+    const sales = await Sales.find({
+      createdAt: { $gte: lastYear, $lte: thisYear },
+      storeInfo: req.store.storeId,
+    });
+
+    const totalSales = sales.reduce((sum, sale) => sum + sale.totalPrice, 0);
+
+    if (totalPurchase >= 0 && totalSales >= 0) {
+      res.json({
+        data: {
+          totalPurchase,
+          totalSales,
+        },
+      });
+    } else {
+      res.json({
+        errors: {
+          common: {
+            msg: "Something went wrong!",
+          },
+        },
+      });
+    }
+  } catch (err) {
+    res.json({
+      errors: {
+        common: {
+          msg: err.message,
+        },
+      },
+    });
+  }
+};
+
 module.exports = {
   getPurchaseAndSales,
+  lastYearBuyAndSales,
 };
