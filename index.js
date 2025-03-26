@@ -6,6 +6,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 
 // internal imports
+require("./jobs/index");
 const refreshTokenRouter = require("./routes/common/refreshTokenRouter");
 const superAdminRouter = require("./routes/superAdmin/users/superAdminRouter");
 const {

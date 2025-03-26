@@ -1,3 +1,7 @@
+const {
+  addStockQueue,
+  addStockQueueName,
+} = require("../../../jobs/addStockQueueJob");
 const Purchase = require("../../../models/storeAdmin/purchaseSchema");
 
 //get all purchase
@@ -14,7 +18,7 @@ const getPurchases = async (req, res) => {
 
     //get category from database
     const purchase = await Purchase.find({ storeInfo: req.store.storeId })
-      .sort({ createdAt: 1 })
+      .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
       .populate("supplierInfo");
@@ -98,7 +102,10 @@ const createPurchase = async (req, res) => {
 
     //send the response
     if (purchase && purchase?._id) {
-      //TODO: add stock by queue
+      if (req.body?.isStock) {
+        // add stock by queue
+        await addStockQueue.add(addStockQueueName, purchase);
+      }
       res.json({
         data: purchase,
         msg: "Purchase was create successful!",
@@ -116,7 +123,7 @@ const createPurchase = async (req, res) => {
     res.json({
       errors: {
         common: {
-          msg: "Unknown error occured!",
+          msg: "Unknown error occured!!",
         },
       },
     });
