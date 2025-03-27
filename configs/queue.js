@@ -1,7 +1,12 @@
-const redisConnection = {
-  host: process.env.REDIS_HOST,
-  port: process.env.REDIS_PORT,
-};
+const IORedis = require("ioredis");
+
+const redisConnection = new IORedis({
+  maxRetriesPerRequest: null,
+  URL: process.env.REDIS_URL,
+});
+
+redisConnection.on("error", (err) => console.error("❌ Redis Error:", err));
+redisConnection.on("connect", () => console.log("✅ Connected to Redis Cloud"));
 
 const defaultQueueOptions = {
   delay: 1000,
