@@ -39,7 +39,6 @@ mongoose
   );
 
 // common middleware
-// ✅ Allow your frontend URL
 app.use(
   cors({
     origin: ["https://business-ims.vercel.app", "http://localhost:3000"],
@@ -52,23 +51,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // routes
-
-const { redisConnection } = require("./configs/queue");
-
-const redis = redisConnection;
-
-// redis testing route
-app.get("/test-redis", async (req, res) => {
-  try {
-    await redis.set("test-key", "Hello from Redis!");
-    const value = await redis.get("test-key");
-    res.json({ success: true, value });
-  } catch (error) {
-    res
-      .status(500)
-      .json({ error: "Redis not working", details: error.message });
-  }
-});
 
 //common routes
 app.use("/api/refresh", refreshTokenRouter);
