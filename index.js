@@ -39,7 +39,14 @@ mongoose
   );
 
 // common middleware
-app.use(cors());
+// ✅ Allow your frontend URL
+app.use(
+  cors({
+    origin: ["https://business-ims.vercel.app", "http://localhost:3000"], // Change this to your frontend URL
+    methods: "GET,POST,PUT,DELETE",
+    credentials: true, // Allow cookies and authentication headers
+  })
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
