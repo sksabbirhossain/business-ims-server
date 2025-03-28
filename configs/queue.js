@@ -2,7 +2,7 @@ const IORedis = require("ioredis");
 
 const redisConnection = new IORedis({
   maxRetriesPerRequest: null,
-  URL: process.env.REDIS_URL,
+  URI: process.env.REDIS_URL,
 });
 
 redisConnection.on("error", (err) => console.error("❌ Redis Error:", err));
