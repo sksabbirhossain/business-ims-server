@@ -18,18 +18,19 @@ const purchaseSchema = mongoose.Schema(
     purchasePrice: {
       type: Number,
       required: true,
-      trim: true,
     },
 
     sellingPrice: {
       type: Number,
       required: true,
-      trim: true,
     },
     quantity: {
       type: Number,
       required: true,
-      trim: true,
+    },
+    totalPrice: {
+      type: Number,
+      required: true,
     },
     category: {
       type: mongoose.Types.ObjectId,
@@ -63,7 +64,7 @@ const purchaseSchema = mongoose.Schema(
     },
     uom: {
       type: String,
-      enum: ["KG", "PICES", "LITER"],
+      enum: ["KG", "PIECE", "LITER"],
       required: true,
       uppercase: true,
     },
@@ -79,7 +80,7 @@ const purchaseSchema = mongoose.Schema(
 purchaseSchema.post("save", async function (doc, next) {
   try {
     const finance = await Financial.findOne({ storeInfo: doc.storeInfo });
-    finance.totalPurchaseCost += doc.purchasePrice;
+    finance.totalPurchaseCost += doc.totalPrice;
     //calculete profit
     finance.totalProfit =
       finance.totalSalesRevenue -
@@ -97,7 +98,7 @@ purchaseSchema.post("findOneAndDelete", async function (doc) {
     if (!doc) return;
     const finance = await Financial.findOne({ storeInfo: doc.storeInfo });
     if (!finance) return;
-    finance.totalPurchaseCost -= doc.purchasePrice;
+    finance.totalPurchaseCost -= doc.totalPrice;
 
     //calculete profit
     finance.totalProfit =
@@ -122,11 +123,10 @@ purchaseSchema.pre("findOneAndUpdate", async function (next) {
 
     // Get new purchase values from update operation
     const updateData = this.getUpdate();
-    const newPurchasePrice =
-      updateData.purchasePrice || oldPurchase.purchasePrice; // If not updated, keep old value
+    const newPurchasePrice = updateData.totalPrice || oldPurchase.totalPrice; // If not updated, keep old value
 
     // Calculate the price difference
-    const priceDifference = newPurchasePrice - oldPurchase.purchasePrice;
+    const priceDifference = newPurchasePrice - oldPurchase.totalPrice;
 
     // Update the financial record
     const finance = await Financial.findOne({

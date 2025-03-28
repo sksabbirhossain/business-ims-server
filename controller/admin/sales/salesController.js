@@ -1,3 +1,4 @@
+const Financial = require("../../../models/storeAdmin/financialSchema");
 const Sales = require("../../../models/storeAdmin/salesSchema");
 
 //get all sales
@@ -150,6 +151,20 @@ const deleteSale = async (req, res) => {
       _id: salesId,
       storeInfo: req.store?.storeId,
     });
+
+    //calculete profit
+    const finance = await Financial.findOne({ storeInfo: req.store?.storeId });
+    if (!finance) return;
+
+    //calculete total sales revenue
+    finance.totalSalesRevenue -= sales?.totalPrice;
+
+    //calculete total profit
+    finance.totalProfit =
+      finance.totalSalesRevenue -
+      (finance.totalPurchaseCost + finance.totalExpenses);
+
+    await finance.save();
 
     //send the response
     if (sales) {

@@ -93,6 +93,7 @@ const createPurchase = async (req, res) => {
     //make user object
     const newPurchase = new Purchase({
       ...req.body,
+      totalPrice: req.body?.purchasePrice * req.body?.quantity,
       picture: null,
       storeInfo: req.store?.storeId,
     });
@@ -143,7 +144,10 @@ const updatePurchase = async (req, res) => {
         _id: purchaseId,
         storeInfo: req.store.storeId,
       },
-      { ...req.body },
+      {
+        ...req.body,
+        totalPrice: req.body?.purchasePrice * req.body?.quantity,
+      },
       { new: true }
     );
 

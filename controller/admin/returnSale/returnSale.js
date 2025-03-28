@@ -1,5 +1,6 @@
 // Optional: If you want a separate returns collection
 
+const Financial = require("../../../models/storeAdmin/financialSchema");
 const ReturnSale = require("../../../models/storeAdmin/returnSale");
 const Sales = require("../../../models/storeAdmin/salesSchema");
 const Stock = require("../../../models/storeAdmin/stockSchema");
@@ -132,6 +133,20 @@ const createReturnSale = async (req, res) => {
     sales.hasReturns = true;
 
     await sales.save();
+
+    //calculete profit
+    const finance = await Financial.findOne({ storeInfo: req.store?.storeId });
+    if (!finance) return;
+
+    //calculete total sales revenue
+    finance.totalSalesRevenue -= price * qty;
+
+    //calculete total profit
+    finance.totalProfit =
+      finance.totalSalesRevenue -
+      (finance.totalPurchaseCost + finance.totalExpenses);
+
+    await finance.save();
 
     // Store return record
     const returnData = new ReturnSale({

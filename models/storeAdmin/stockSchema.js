@@ -17,18 +17,19 @@ const stockSchema = mongoose.Schema(
     purchasePrice: {
       type: Number,
       required: true,
-      trim: true,
     },
 
     sellingPrice: {
       type: Number,
       required: true,
-      trim: true,
     },
     quantity: {
       type: Number,
       required: true,
-      trim: true,
+    },
+    totalPrice: {
+      type: Number,
+      required: true,
     },
     category: {
       type: mongoose.Types.ObjectId,
@@ -62,7 +63,7 @@ const stockSchema = mongoose.Schema(
     },
     uom: {
       type: String,
-      enum: ["KG", "PICES", "LITER"],
+      enum: ["KG", "PIECE", "LITER"],
       required: true,
       uppercase: true,
     },

@@ -114,6 +114,7 @@ const createStock = async (req, res) => {
     //make user object
     const newStock = new Stock({
       ...req.body,
+      totalPrice: req.body?.purchasePrice * req.body?.quantity,
       picture: null,
       storeInfo: req.store?.storeId,
     });
@@ -159,7 +160,10 @@ const updateStock = async (req, res) => {
         _id: stockId,
         storeInfo: req.store.storeId,
       },
-      { ...req.body },
+      {
+        ...req.body,
+        totalPrice: req.body?.purchasePrice * req.body?.quantity,
+      },
       { new: true }
     );
 
