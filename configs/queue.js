@@ -1,8 +1,9 @@
 const IORedis = require("ioredis");
 
-const redisConnection = new IORedis({
+const redisConnection = new IORedis(process.env.REDIS_URL, {
   maxRetriesPerRequest: null,
-  URI: process.env.REDIS_URL,
+  enableReadyCheck: false,
+  tls: process.env.REDIS_URL.startsWith("rediss://") ? {} : undefined, // Use TLS if required
 });
 
 redisConnection.on("error", (err) => console.error("❌ Redis Error:", err));
