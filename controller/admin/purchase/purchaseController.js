@@ -120,12 +120,11 @@ const createPurchase = async (req, res) => {
       });
     }
   } catch (err) {
-    console.log(err);
     res.json({
       errors: {
         common: {
-          msg: err,
-          // msg: "Unknown error occured!!",
+          // msg: err,
+          msg: "Unknown error occured!!",
         },
       },
     });
