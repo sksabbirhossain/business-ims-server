@@ -32,7 +32,7 @@ const getPurchaseAndSales = async (req, res) => {
       if (!dataMap.has(dateKey)) {
         dataMap.set(dateKey, { createdAt: dateKey, Purchase: 0, Sale: 0 });
       }
-      dataMap.get(dateKey).Purchase += p.purchasePrice; // Adjust field based on schema
+      dataMap.get(dateKey).Purchase += p?.totalPrice; // Adjust field based on schema
     });
 
     // Process sales
@@ -89,7 +89,7 @@ const lastYearBuyAndSales = async (req, res) => {
     });
 
     const totalPurchase = purchases.reduce(
-      (sum, purchase) => sum + purchase.purchasePrice,
+      (sum, purchase) => sum + purchase.totalPrice,
       0
     );
 
