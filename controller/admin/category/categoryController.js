@@ -14,7 +14,7 @@ const getCategories = async (req, res) => {
 
     //get category from database
     const category = await Category.find({ storeInfo: req.store.storeId })
-      .sort({ createdAt: 1 })
+      .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);
 

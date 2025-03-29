@@ -3,6 +3,7 @@ const {
   createCustomer,
   updateCustomer,
   deleteCustomer,
+  getCustomers,
 } = require("../../../controller/admin/customer/customerController");
 const checkIsAdmin = require("../../../middleware/common/admin/checkIsAdmin");
 const {
@@ -11,6 +12,9 @@ const {
 } = require("../../../validators/admin/customer/customerValidators");
 
 const router = express.Router();
+
+//get all customer
+router.get("/", checkIsAdmin, getCustomers);
 
 //create customer
 router.post(

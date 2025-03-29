@@ -1,8 +1,6 @@
 const { validationResult, check } = require("express-validator");
 const createError = require("http-errors");
 
-const Category = require("../../../models/storeAdmin/categorySchema");
-const { isEmpty } = require("bullmq");
 const Customer = require("../../../models/storeAdmin/customerSchema");
 
 const customerValidators = [
