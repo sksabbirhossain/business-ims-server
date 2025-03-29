@@ -7,6 +7,7 @@ const SalesSchema = new mongoose.Schema(
   {
     customer: {
       type: mongoose.Schema.Types.Mixed,
+      ref: "Customer",
       required: true,
       validate: {
         validator: function (value) {
@@ -62,6 +63,21 @@ const SalesSchema = new mongoose.Schema(
     subTotal: {
       type: Number,
       required: true,
+    },
+    due: {
+      type: Number,
+      required: true,
+    },
+    cash: {
+      type: Number,
+      required: true,
+    },
+    bank: {
+      type: Number,
+      required: true,
+    },
+    bankInfo: {
+      type: String,
     },
     paymentStatus: {
       type: String,
