@@ -8,6 +8,7 @@ const Customer = require("../../../models/storeAdmin/customerSchema");
 const customerValidators = [
   check("name").notEmpty().withMessage("Name is required").trim(),
   check("email")
+    .optional()
     .isEmail()
     .withMessage("Email must-be a valid email address")
     .trim()
@@ -46,9 +47,11 @@ const customerValidators = [
       }
     }),
   check("address")
-    .notEmpty("Address is required")
+    .notEmpty()
+    .withMessage("Address is required")
     .isLength({ min: 3 })
-    .withMessage("Address must-be 3 characters"),
+    .withMessage("Address must-be 3 characters")
+    .trim(),
 ];
 
 const customerValidationHandler = (req, res, next) => {

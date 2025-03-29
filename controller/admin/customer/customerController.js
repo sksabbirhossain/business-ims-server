@@ -1,21 +1,23 @@
-//create category
+const Customer = require("../../../models/storeAdmin/customerSchema");
+
+//create customer
 const createCustomer = async (req, res) => {
-  try {
+    try {
     //make user object
-    const newCategory = new Category({
+    const newCustomer = new Customer({
       ...req.body,
       picture: null,
       storeInfo: req.store?.storeId,
     });
 
     //save user in database
-    const category = await newCategory.save();
+    const customer = await newCustomer.save();
 
     //send the response
-    if (category && category._id) {
+    if (customer && customer._id) {
       res.json({
-        data: category,
-        msg: "Category was create successful!",
+        data: customer,
+        msg: "Customer was create successful!",
       });
     } else {
       res.json({
