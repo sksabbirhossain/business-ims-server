@@ -105,7 +105,44 @@ const updateCustomer = async (req, res) => {
   }
 };
 
+//delete a customer by customer id
+const deleteCustomer = async (req, res) => {
+  try {
+    const { customerId } = req.params || {};
+
+    const deletedCustomer = await Customer.findByIdAndDelete({
+      _id: customerId,
+      storeInfo: req.store.storeId,
+    });
+
+    //send the response
+    if (deletedCustomer) {
+      res.status(200).json({
+        status: 200,
+        msg: "Customer deleted successful!",
+      });
+    } else {
+      res.status(404).json({
+        errors: {
+          common: {
+            msg: "Unknown error occured!",
+          },
+        },
+      });
+    }
+  } catch (err) {
+    res.json({
+      errors: {
+        common: {
+          msg: err.message,
+        },
+      },
+    });
+  }
+};
+
 module.exports = {
   createCustomer,
   updateCustomer,
+  deleteCustomer,
 };

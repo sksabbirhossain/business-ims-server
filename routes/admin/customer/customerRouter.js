@@ -2,6 +2,7 @@ const express = require("express");
 const {
   createCustomer,
   updateCustomer,
+  deleteCustomer,
 } = require("../../../controller/admin/customer/customerController");
 const checkIsAdmin = require("../../../middleware/common/admin/checkIsAdmin");
 const {
@@ -21,12 +22,15 @@ router.post(
 );
 
 //update customer by id
-router.post(
+router.patch(
   "/:customerId",
   checkIsAdmin,
   customerValidators,
   customerValidationHandler,
   updateCustomer
 );
+
+//delete customer by id
+router.delete("/:customerId", checkIsAdmin, deleteCustomer);
 
 module.exports = router;
