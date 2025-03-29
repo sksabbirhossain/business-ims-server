@@ -1,6 +1,7 @@
 const express = require("express");
 const {
   createCustomer,
+  updateCustomer,
 } = require("../../../controller/admin/customer/customerController");
 const checkIsAdmin = require("../../../middleware/common/admin/checkIsAdmin");
 const {
@@ -17,6 +18,15 @@ router.post(
   customerValidators,
   customerValidationHandler,
   createCustomer
+);
+
+//update customer by id
+router.post(
+  "/:customerId",
+  checkIsAdmin,
+  customerValidators,
+  customerValidationHandler,
+  updateCustomer
 );
 
 module.exports = router;
