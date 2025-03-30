@@ -145,6 +145,9 @@ SalesSchema.pre("save", async function (next) {
       financial.totalSalesRevenue -
       (financial.totalPurchaseCost + financial.totalExpenses);
 
+    //calculete due
+    financial.totalDue += this.due;
+
     await financial.save();
     next();
   } catch (error) {
