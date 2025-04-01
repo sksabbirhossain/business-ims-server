@@ -4,6 +4,8 @@ const {
   updateCustomer,
   deleteCustomer,
   getCustomers,
+  getAllCustomer,
+  getCustomer,
 } = require("../../../controller/admin/customer/customerController");
 const checkIsAdmin = require("../../../middleware/common/admin/checkIsAdmin");
 const {
@@ -13,8 +15,14 @@ const {
 
 const router = express.Router();
 
-//get all customer
+//get customers
 router.get("/", checkIsAdmin, getCustomers);
+
+//get all customer
+router.get("/all", checkIsAdmin, getAllCustomer);
+
+//get a customer by id
+router.get("/:customerId", checkIsAdmin, getCustomer);
 
 //create customer
 router.post(

@@ -1,6 +1,6 @@
 const Customer = require("../../../models/storeAdmin/customerSchema");
 
-//get all customer
+//get customers
 const getCustomers = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1; // Default page is 1
@@ -26,6 +26,74 @@ const getCustomers = async (req, res) => {
         currentPage: page,
         totalPages: Math.ceil(totalCustomers / limit),
         limit: limit,
+      });
+    } else {
+      res.json({
+        errors: {
+          common: {
+            msg: "Unknown error occured!",
+          },
+        },
+      });
+    }
+  } catch (err) {
+    res.json({
+      errors: {
+        common: {
+          msg: err.message,
+        },
+      },
+    });
+  }
+};
+
+//get all customer
+const getAllCustomer = async (req, res) => {
+  try {
+    //get Cusotmer from database
+    const customer = await Customer.find({ storeInfo: req.store.storeId }).sort(
+      { createdAt: -1 }
+    );
+
+    //send the response
+    if (customer && customer.length >= 0) {
+      res.json({
+        data: customer,
+      });
+    } else {
+      res.json({
+        errors: {
+          common: {
+            msg: "Unknown error occured!",
+          },
+        },
+      });
+    }
+  } catch (err) {
+    res.json({
+      errors: {
+        common: {
+          msg: err.message,
+        },
+      },
+    });
+  }
+};
+
+//get a customer by id
+const getCustomer = async (req, res) => {
+  try {
+    const { customerId } = req.params || {};
+    //get category from database
+    const customer = await Customer.findOne({
+      _id: customerId,
+      storeInfo: req.store.storeId,
+    });
+
+    //send the response
+    if (customer && customer._id) {
+      res.json({
+        data: customer,
       });
     } else {
       res.json({
@@ -190,6 +258,8 @@ const deleteCustomer = async (req, res) => {
 
 module.exports = {
   getCustomers,
+  getAllCustomer,
+  getCustomer,
   createCustomer,
   updateCustomer,
   deleteCustomer,
