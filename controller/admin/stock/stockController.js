@@ -5,7 +5,7 @@ const getStocks = async (req, res) => {
   try {
     //get category from database
     const stocks = await Stock.find({ storeInfo: req.store.storeId })
-      .sort({ createdAt: 1 })
+      .sort({ createdAt: -1 })
       .populate("supplierInfo");
 
     //send the response

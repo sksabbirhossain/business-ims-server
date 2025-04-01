@@ -1,16 +1,42 @@
+const mongoose = require("mongoose");
+
+const Customer = require("../../../models/storeAdmin/customerSchema");
 const Financial = require("../../../models/storeAdmin/financialSchema");
 const Sales = require("../../../models/storeAdmin/salesSchema");
 
 //get all sales
 const getAllSales = async (req, res) => {
   try {
+    const page = parseInt(req.query.page) || 1; // Default page is 1
+    const limit = parseInt(req.query.limit) || 10; // Default limit is 10
+    const skip = (page - 1) * limit; // Calculate offset
+
+    // Get total count
+    const totalSales = await Sales.countDocuments({
+      storeInfo: req.store.storeId,
+    });
+
     //get all sales
-    const sales = await Sales.find({ storeInfo: req.store?.storeId });
+    const sales = await Sales.find({ storeInfo: req.store?.storeId })
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    for (const sale of sales) {
+      // Check if `customer` is an ObjectId (string)
+      if (mongoose.isValidObjectId(sale.customer)) {
+        sale.customer = await Customer.findById(sale.customer).lean();
+      }
+    }
 
     //send the response
     if (sales) {
       res.json({
         data: sales,
+        total: totalSales,
+        currentPage: page,
+        totalPages: Math.ceil(totalSales / limit),
+        limit: limit,
       });
     } else {
       res.json({
