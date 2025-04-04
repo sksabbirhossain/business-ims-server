@@ -103,6 +103,11 @@ const getSale = async (req, res) => {
       storeInfo: req.store?.storeId,
     }).populate("cart.product");
 
+    // Check if `customer` is an ObjectId (string)
+    if (mongoose.isValidObjectId(sale.customer)) {
+      sale.customer = await Customer.findById(sale.customer).lean();
+    }
+
     //send the response
     if (sale) {
       res.json({

@@ -23,8 +23,7 @@ const supplierValidators = [
     .withMessage("Description must-be 10 characters")
     .trim(),
   check("email")
-    .notEmpty()
-    .withMessage("Email is required")
+    .optional({ checkFalsy: true })
     .isEmail()
     .withMessage("Email must-be a valid email address")
     .trim(),

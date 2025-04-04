@@ -1,15 +1,31 @@
 const Supplier = require("../../../models/storeAdmin/supplierSchema");
 
-//get suppliers
+//get all supplier suppliers with pagination
 const suppliers = async (req, res) => {
   try {
+    const page = parseInt(req.query.page) || 1; // Default page is 1
+    const limit = parseInt(req.query.limit) || 10; // Default limit is 10
+    const skip = (page - 1) * limit; // Calculate offset
+
+    // Get total count
+    const totalSuppliers = await Supplier.countDocuments({
+      storeInfo: req.store.storeId,
+    });
+
     //get suppliers
-    const suppliers = await Supplier.find({ storeInfo: req.store?.storeId });
+    const suppliers = await Supplier.find({ storeInfo: req.store?.storeId })
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
 
     //send the response
     if (suppliers) {
       res.json({
         data: suppliers,
+        total: totalSuppliers,
+        currentPage: page,
+        totalPages: Math.ceil(totalSuppliers / limit),
+        limit: limit,
       });
     } else {
       res.json({
