@@ -12,6 +12,7 @@ const {
   customerValidators,
   customerValidationHandler,
 } = require("../../../validators/admin/customer/customerValidators");
+const { updateCustomerValidationHandler, updateCustomerValidators } = require("../../../validators/admin/customer/updateCustomerValidators");
 
 const router = express.Router();
 
@@ -37,8 +38,8 @@ router.post(
 router.patch(
   "/:customerId",
   checkIsAdmin,
-  customerValidators,
-  customerValidationHandler,
+  updateCustomerValidators,
+  updateCustomerValidationHandler,
   updateCustomer
 );
 
