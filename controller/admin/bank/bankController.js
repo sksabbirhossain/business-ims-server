@@ -47,6 +47,108 @@ const getBanks = async (req, res) => {
   }
 };
 
+//get a bank by id
+const getbank = async (req, res) => {
+  try {
+    const { bankId } = req.params || {};
+    //get bank from database
+    const bank = await Bank.findOne({
+      _id: bankId,
+      storeInfo: req.store.storeId,
+    });
+
+    //send the response
+    if (bank && bank._id) {
+      res.json({
+        data: bank,
+      });
+    } else {
+      res.json({
+        errors: {
+          common: {
+            msg: "Unknown error occured!",
+          },
+        },
+      });
+    }
+  } catch (err) {
+    res.json({
+      errors: {
+        common: {
+          msg: err.message,
+        },
+      },
+    });
+  }
+};
+
+//update a bank by id
+const updateBank = async (req, res) => {
+  try {
+    const { bankId } = req.params || {};
+
+    //get bank from database
+    const bank = await Bank.findOne({
+      _id: bankId,
+      storeInfo: req.store.storeId,
+    });
+
+    // if bank not found
+    if (!bank?._id) {
+      return res.json({
+        errors: {
+          common: {
+            msg: "bank was not found!",
+          },
+        },
+      });
+    }
+
+    const updateData = req.body;
+
+    // If an image is uploaded, add its path to updateData
+    if (req.file) {
+      updateData.picture = req.file.path;
+    }
+
+    const updatedbank = await bank.findOneAndUpdate(
+      {
+        _id: bankId,
+        storeInfo: req.store.storeId,
+      },
+      updateData,
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+
+    //send the response
+    if (updatedbank?._id) {
+      res.json({
+        data: updatedbank,
+      });
+    } else {
+      res.json({
+        errors: {
+          common: {
+            msg: "Unknown error occured!",
+          },
+        },
+      });
+    }
+  } catch (err) {
+    // console.log(err)
+    res.json({
+      errors: {
+        common: {
+          msg: err.message,
+        },
+      },
+    });
+  }
+};
+
 //create bank
 const createBank = async (req, res) => {
   try {
@@ -86,7 +188,47 @@ const createBank = async (req, res) => {
   }
 };
 
+//delete a bank by bank id
+const deleteBank = async (req, res) => {
+  try {
+    const { bankId } = req.params || {};
+
+    const deletedBank = await Bank.findByIdAndDelete({
+      _id: bankId,
+      storeInfo: req.store.storeId,
+    });
+
+    //send the response
+    if (deletedBank) {
+      res.status(200).json({
+        status: 200,
+        msg: "bank deleted successful!",
+      });
+    } else {
+      res.status(404).json({
+        errors: {
+          common: {
+            msg: "Unknown error occured!",
+          },
+        },
+      });
+    }
+  } catch (err) {
+    // console.log(err)
+    res.json({
+      errors: {
+        common: {
+          msg: err.message,
+        },
+      },
+    });
+  }
+};
+
 module.exports = {
   getBanks,
+  getbank,
+  updateBank,
   createBank,
+  deleteBank,
 };

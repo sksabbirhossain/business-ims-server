@@ -1,6 +1,12 @@
 const express = require("express");
 const checkIsAdmin = require("../../../middleware/common/admin/checkIsAdmin");
-const { createBank } = require("../../../controller/admin/bank/bankController");
+const {
+  createBank,
+  getBanks,
+  getbank,
+  updateBank,
+  deleteBank,
+} = require("../../../controller/admin/bank/bankController");
 const {
   bankValidators,
   bankValidationHandler,
@@ -11,6 +17,18 @@ const router = express.Router();
 //get all bank
 router.get("/bank-list", checkIsAdmin, getBanks);
 
+// get a bank by bankId
+router.get("/bank/:bankId", checkIsAdmin, getbank);
+
+//update a bank by bankId
+router.patch(
+  "/update-bank/:bankId",
+  checkIsAdmin,
+  bankValidators,
+  bankValidationHandler,
+  updateBank
+);
+
 //create bank
 router.post(
   "/create",
@@ -19,5 +37,8 @@ router.post(
   bankValidationHandler,
   createBank
 );
+
+// delete a bank by bankId
+router.delete("/delete-bank/:bankId", checkIsAdmin, deleteBank);
 
 module.exports = router;
