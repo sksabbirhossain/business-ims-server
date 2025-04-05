@@ -6,7 +6,7 @@ const Customer = require("../../../models/storeAdmin/customerSchema");
 const customerValidators = [
   check("name").notEmpty().withMessage("Name is required").trim(),
   check("email")
-    .optional()
+    .optional({ checkFalsy: true })
     .isEmail()
     .withMessage("Email must-be a valid email address")
     .trim()

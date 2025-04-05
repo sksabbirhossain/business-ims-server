@@ -6,7 +6,7 @@ const Customer = require("../../../models/storeAdmin/customerSchema");
 const updateCustomerValidators = [
   check("name").notEmpty().withMessage("Name is required").trim(),
   check("email")
-    .optional()
+    .optional({ checkFalsy: true })
     .isEmail()
     .withMessage("Email must-be a valid email address")
     .trim()
@@ -16,7 +16,7 @@ const updateCustomerValidators = [
           email: value,
           storeInfo: req.store.storeId,
         });
-        if (customer?._id != req.params?.customerId) {
+        if (customer && customer?._id != req.params?.customerId) {
           throw createError("Customer Email is already exists");
         }
       } catch (err) {
@@ -37,7 +37,7 @@ const updateCustomerValidators = [
           phone: value,
           storeInfo: req.store.storeId,
         });
-        if (customer?._id != req.params?.customerId) {
+        if (customer && customer?._id != req.params?.customerId) {
           throw createError("Customer phone number is already exists");
         }
       } catch (err) {
