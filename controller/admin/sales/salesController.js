@@ -101,7 +101,7 @@ const getSale = async (req, res) => {
     const sale = await Sales.findOne({
       _id: salesId,
       storeInfo: req.store?.storeId,
-    }).populate("cart.product");
+    }).populate(["cart.product", "bankInfo"]);
 
     // Check if `customer` is an ObjectId (string)
     if (mongoose.isValidObjectId(sale.customer)) {

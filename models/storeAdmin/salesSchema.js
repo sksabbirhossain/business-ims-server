@@ -77,7 +77,8 @@ const SalesSchema = new mongoose.Schema(
       required: true,
     },
     bankInfo: {
-      type: String,
+      type: mongoose.Types.ObjectId,
+      ref: "Bank",
     },
     paymentStatus: {
       type: String,
