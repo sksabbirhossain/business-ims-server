@@ -6,6 +6,7 @@ const {
   getbank,
   updateBank,
   deleteBank,
+  getAllBanks,
 } = require("../../../controller/admin/bank/bankController");
 const {
   bankValidators,
@@ -14,8 +15,11 @@ const {
 
 const router = express.Router();
 
-//get all bank
+//get banks with pagination
 router.get("/bank-list", checkIsAdmin, getBanks);
+
+//get all bank
+router.get("/all", checkIsAdmin, getAllBanks);
 
 // get a bank by bankId
 router.get("/bank/:bankId", checkIsAdmin, getbank);

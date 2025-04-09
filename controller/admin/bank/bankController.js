@@ -1,6 +1,6 @@
 const Bank = require("../../../models/storeAdmin/bankSchema");
 
-//get all bank with pagination
+//get banks with pagination
 const getBanks = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1; // Default page is 1
@@ -26,6 +26,39 @@ const getBanks = async (req, res) => {
         currentPage: page,
         totalPages: Math.ceil(totalBanks / limit),
         limit: limit,
+      });
+    } else {
+      res.json({
+        errors: {
+          common: {
+            msg: "Unknown error occured!",
+          },
+        },
+      });
+    }
+  } catch (err) {
+    res.json({
+      errors: {
+        common: {
+          msg: err.message,
+        },
+      },
+    });
+  }
+};
+
+//get all bank
+const getAllBanks = async (req, res) => {
+  try {
+    //get bank from database
+    const bank = await Bank.find({ storeInfo: req.store.storeId }).sort({
+      createdAt: -1,
+    });
+
+    //send the response
+    if (bank && bank.length >= 0) {
+      res.json({
+        data: bank,
       });
     } else {
       res.json({
@@ -227,6 +260,7 @@ const deleteBank = async (req, res) => {
 
 module.exports = {
   getBanks,
+  getAllBanks,
   getbank,
   updateBank,
   createBank,
