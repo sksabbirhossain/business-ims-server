@@ -144,7 +144,7 @@ const updateBank = async (req, res) => {
       updateData.picture = req.file.path;
     }
 
-    const updatedbank = await bank.findOneAndUpdate(
+    const updatedbank = await Bank.findOneAndUpdate(
       {
         _id: bankId,
         storeInfo: req.store.storeId,
@@ -175,7 +175,8 @@ const updateBank = async (req, res) => {
     res.json({
       errors: {
         common: {
-          msg: err.message,
+          // msg: err.message,
+          msg: "Unknown error occured!",
         },
       },
     });

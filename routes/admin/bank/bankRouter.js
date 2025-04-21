@@ -22,7 +22,7 @@ router.get("/bank-list", checkIsAdmin, getBanks);
 router.get("/all", checkIsAdmin, getAllBanks);
 
 // get a bank by bankId
-router.get("/bank/:bankId", checkIsAdmin, getbank);
+router.get("/:bankId", checkIsAdmin, getbank);
 
 //update a bank by bankId
 router.patch(
