@@ -17,7 +17,7 @@ const SalaryHistorySchema = new mongoose.Schema({
 
 const employeeSchema = new mongoose.Schema(
   {
-    store: {
+    storeInfo: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Store",
       required: true,
@@ -51,6 +51,10 @@ const employeeSchema = new mongoose.Schema(
     isActive: {
       type: Boolean,
       default: true,
+    },
+    picture: String,
+    picture_info: {
+      public_key: String,
     },
     salaryHistory: [SalaryHistorySchema],
   },

@@ -25,6 +25,7 @@ const financialRouter = require("./routes/admin/financial/financialRouter");
 const dashboardRouter = require("./routes/admin/dashboard/dashboardRouter");
 const customerRouter = require("./routes/admin/customer/customerRouter");
 const bankRouter = require("./routes/admin/bank/bankRouter");
+const employeeRouter = require("./routes/admin/employee/employeeRouter");
 
 //initialize app
 const app = express();
@@ -93,6 +94,9 @@ app.use("/api/admin/customer", customerRouter);
 
 //bank routes
 app.use("/api/admin/bank", bankRouter);
+
+//employee routes
+app.use("/api/admin/employee", employeeRouter);
 
 //404 not found error handler
 app.use(notFoundHandler);
