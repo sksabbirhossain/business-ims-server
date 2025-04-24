@@ -47,6 +47,41 @@ const getEmployees = async (req, res) => {
   }
 };
 
+//get a employee by id
+const getEmployee = async (req, res) => {
+  try {
+    const { employeeId } = req.params || {};
+    //get bank from database
+    const employee = await Employee.findOne({
+      _id: employeeId,
+      storeInfo: req.store.storeId,
+    });
+
+    //send the response
+    if (employee && employee._id) {
+      res.json({
+        data: employee,
+      });
+    } else {
+      res.json({
+        errors: {
+          common: {
+            msg: "Unknown error occured!",
+          },
+        },
+      });
+    }
+  } catch (err) {
+    res.json({
+      errors: {
+        common: {
+          msg: err.message,
+        },
+      },
+    });
+  }
+};
+
 //create employee
 const createEmployee = async (req, res) => {
   try {
@@ -87,4 +122,4 @@ const createEmployee = async (req, res) => {
   }
 };
 
-module.exports = { getEmployees, createEmployee };
+module.exports = { getEmployees, getEmployee, createEmployee };
