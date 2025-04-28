@@ -4,6 +4,7 @@ const {
   createEmployee,
   getEmployees,
   getEmployee,
+  updateEmployee,
 } = require("../../../controller/admin/employee/employeeController");
 const {
   employeeValidators,
@@ -26,5 +27,8 @@ router.post(
   employeeValidationHandler,
   createEmployee
 );
+
+//update a employee by employeeId
+router.patch("/update-employee/:employeeId", checkIsAdmin, updateEmployee);
 
 module.exports = router;

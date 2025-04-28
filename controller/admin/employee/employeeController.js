@@ -51,7 +51,7 @@ const getEmployees = async (req, res) => {
 const getEmployee = async (req, res) => {
   try {
     const { employeeId } = req.params || {};
-    //get bank from database
+    //get employee from database
     const employee = await Employee.findOne({
       _id: employeeId,
       storeInfo: req.store.storeId,
@@ -122,4 +122,77 @@ const createEmployee = async (req, res) => {
   }
 };
 
-module.exports = { getEmployees, getEmployee, createEmployee };
+//update a bank by id
+const updateEmployee = async (req, res) => {
+  try {
+    const { employeeId } = req.params || {};
+
+    //get employee from database
+    const employee = await Employee.findOne({
+      _id: employeeId,
+      storeInfo: req.store.storeId,
+    });
+
+    // if employee not found
+    if (!employee?._id) {
+      return res.json({
+        errors: {
+          common: {
+            msg: "employee was not found!",
+          },
+        },
+      });
+    }
+
+    const updateData = req.body;
+
+    // If an image is uploaded, add its path to updateData
+    if (req.file) {
+      updateData.picture = req.file.path;
+    }
+
+    const updatedEmployee = await Employee.findOneAndUpdate(
+      {
+        _id: employeeId,
+        storeInfo: req.store.storeId,
+      },
+      updateData,
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+
+    //send the response
+    if (updatedEmployee?._id) {
+      res.json({
+        data: updatedEmployee,
+      });
+    } else {
+      res.json({
+        errors: {
+          common: {
+            msg: "Unknown error occured!",
+          },
+        },
+      });
+    }
+  } catch (err) {
+    // console.log(err);
+    res.json({
+      errors: {
+        common: {
+          // msg: err.message,
+          msg: "Unknown error occured!",
+        },
+      },
+    });
+  }
+};
+
+module.exports = {
+  getEmployees,
+  getEmployee,
+  createEmployee,
+  updateEmployee,
+};
