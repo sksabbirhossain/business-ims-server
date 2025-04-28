@@ -2,8 +2,8 @@
   "name": "business-ims-server",
   "version": "1.0.0",
   "main": "index.js",
-  "author": "sksabbirhossain <sksabbirhossain4@gmail.com>",
-  "license": "MIT",
+  "author": "sk sabbir hossain <sksabbirhossain4@gmail.com>",
+  "license": "SEE LICENSE IN LICENSE.md",
   "scripts": {
     "dev": "nodemon index.js",
     "start": "node index.js"
