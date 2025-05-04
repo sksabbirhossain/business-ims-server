@@ -190,9 +190,47 @@ const updateEmployee = async (req, res) => {
   }
 };
 
+//delete a employee by employee id
+const deleteEmployee = async (req, res) => {
+  try {
+    const { employeeId } = req.params || {};
+
+    const deletedEmployee = await Employee.findByIdAndDelete({
+      _id: employeeId,
+      storeInfo: req.store.storeId,
+    });
+
+    //send the response
+    if (deletedEmployee) {
+      res.status(200).json({
+        status: 200,
+        msg: "Employee deleted successful!",
+      });
+    } else {
+      res.status(404).json({
+        errors: {
+          common: {
+            msg: "Unknown error occured!",
+          },
+        },
+      });
+    }
+  } catch (err) {
+    // console.log(err)
+    res.json({
+      errors: {
+        common: {
+          msg: err.message,
+        },
+      },
+    });
+  }
+};
+
 module.exports = {
   getEmployees,
   getEmployee,
   createEmployee,
   updateEmployee,
+  deleteEmployee,
 };

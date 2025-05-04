@@ -5,6 +5,7 @@ const {
   getEmployees,
   getEmployee,
   updateEmployee,
+  deleteEmployee,
 } = require("../../../controller/admin/employee/employeeController");
 const {
   employeeValidators,
@@ -30,5 +31,8 @@ router.post(
 
 //update a employee by employeeId
 router.patch("/update-employee/:employeeId", checkIsAdmin, updateEmployee);
+
+// delete a bank by bankId
+router.delete("/delete-employee/:employeeId", checkIsAdmin, deleteEmployee);
 
 module.exports = router;
