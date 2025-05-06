@@ -6,6 +6,8 @@ const {
   getEmployee,
   updateEmployee,
   deleteEmployee,
+  addSalary,
+  addEmployeeSalary,
 } = require("../../../controller/admin/employee/employeeController");
 const {
   employeeValidators,
@@ -28,6 +30,9 @@ router.post(
   employeeValidationHandler,
   createEmployee
 );
+
+//add monthly salary
+router.post("/add-salary", checkIsAdmin, addEmployeeSalary);
 
 //update a employee by employeeId
 router.patch("/update-employee/:employeeId", checkIsAdmin, updateEmployee);

@@ -1,4 +1,5 @@
 const Employee = require("../../../models/storeAdmin/employeeSchema");
+const Financial = require("../../../models/storeAdmin/financialSchema");
 
 //get employee with pagination
 const getEmployees = async (req, res) => {
@@ -122,7 +123,96 @@ const createEmployee = async (req, res) => {
   }
 };
 
-//update a bank by id
+//add employee salary by employeeId
+const addEmployeeSalary = async (req, res) => {
+  try {
+    const { employeeId, month, amount } = req.body;
+
+    if (!employeeId || !month || !amount) {
+      return res.status(400).json({
+        errors: {
+          common: {
+            msg: "All fields are required!",
+          },
+        },
+      });
+    }
+
+    const employee = await Employee.findById(employeeId);
+    if (!employee) {
+      return res.status(404).json({
+        errors: {
+          common: {
+            msg: "Employee not found!",
+          },
+        },
+      });
+    }
+
+    // Prevent duplicate month entry
+    const alreadyPaid = employee.salaryHistory.find(
+      (entry) => entry.month === month
+    );
+    if (alreadyPaid) {
+      return res.status(400).json({
+        errors: {
+          common: {
+            msg: "Salary for this month already paid!",
+          },
+        },
+      });
+    }
+
+    // Add salary record
+    employee.salaryHistory.push({
+      month,
+      amount,
+    });
+
+    await employee.save();
+
+    // Update financial record
+    const financial = await Financial.findOne({
+      storeInfo: employee.storeInfo,
+    });
+
+    if (!financial) {
+      return res.status(404).json({
+        errors: {
+          common: {
+            msg: "Financial record not found for this store!",
+          },
+        },
+      });
+    }
+
+    financial.totalExpenses += parseInt(amount);
+
+    // Recalculate profit
+    financial.totalProfit =
+      financial.totalSalesRevenue -
+      (financial.totalPurchaseCost + financial.totalExpenses);
+    financial.lastUpdated = Date.now();
+
+    await financial.save();
+
+    res.status(200).json({
+      data: employee,
+      msg: "Salary added successfully",
+    });
+  } catch (err) {
+    res.json({
+      errors: {
+        common: {
+          msg: err.message,
+          //   msg: "internal server error"
+        },
+      },
+    });
+  }
+};
+
+//update a employee by id
 const updateEmployee = async (req, res) => {
   try {
     const { employeeId } = req.params || {};
@@ -231,6 +321,7 @@ module.exports = {
   getEmployees,
   getEmployee,
   createEmployee,
+  addEmployeeSalary,
   updateEmployee,
   deleteEmployee,
 };
