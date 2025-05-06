@@ -280,6 +280,93 @@ const updateEmployee = async (req, res) => {
   }
 };
 
+//delete a employee monthly salary by employee id
+const deleteEmployeeSalary = async (req, res) => {
+  try {
+    const { employeeId, salaryId } = req.body;
+
+    if (!employeeId || !salaryId) {
+      return res.status(400).json({
+        errors: {
+          common: {
+            msg: "Employee ID and salary ID are required!",
+          },
+        },
+      });
+    }
+
+    const employee = await Employee.findById(employeeId);
+    if (!employee) {
+      return res.status(404).json({
+        errors: {
+          common: {
+            msg: "Employee not found!",
+          },
+        },
+      });
+    }
+
+    // Find the salary entry for the month
+    const salaryIndex = employee.salaryHistory.findIndex(
+      (entry) => entry._id.toString() === salaryId
+    );
+
+    if (salaryIndex === -1) {
+      return res.status(404).json({
+        errors: {
+          common: {
+            msg: "Salary for this month not found!",
+          },
+        },
+      });
+    }
+
+    // Extract and remove salary amount
+    const removedSalary = employee.salaryHistory[salaryIndex];
+    employee.salaryHistory.splice(salaryIndex, 1);
+    await employee.save();
+
+    // Update financial record
+    const financial = await Financial.findOne({
+      storeInfo: employee.storeInfo,
+    });
+
+    if (!financial) {
+      return res.status(404).json({
+        errors: {
+          common: {
+            msg: "Financial record not found for this store!",
+          },
+        },
+      });
+    }
+
+    financial.totalExpenses -= removedSalary.amount;
+    if (financial.totalExpenses < 0) financial.totalExpenses = 0; // Prevent negative
+
+    financial.totalProfit =
+      financial.totalSalesRevenue -
+      (financial.totalPurchaseCost + financial.totalExpenses);
+    financial.lastUpdated = Date.now();
+
+    await financial.save();
+
+    res.status(200).json({
+      msg: "Salary deleted successfully",
+      data: employee,
+    });
+  } catch (err) {
+    // console.log(err)
+    res.json({
+      errors: {
+        common: {
+          msg: err.message,
+        },
+      },
+    });
+  }
+};
+
 //delete a employee by employee id
 const deleteEmployee = async (req, res) => {
   try {
@@ -323,5 +410,6 @@ module.exports = {
   createEmployee,
   addEmployeeSalary,
   updateEmployee,
+  deleteEmployeeSalary,
   deleteEmployee,
 };

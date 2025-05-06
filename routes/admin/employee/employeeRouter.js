@@ -8,6 +8,7 @@ const {
   deleteEmployee,
   addSalary,
   addEmployeeSalary,
+  deleteEmployeeSalary,
 } = require("../../../controller/admin/employee/employeeController");
 const {
   employeeValidators,
@@ -37,7 +38,10 @@ router.post("/add-salary", checkIsAdmin, addEmployeeSalary);
 //update a employee by employeeId
 router.patch("/update-employee/:employeeId", checkIsAdmin, updateEmployee);
 
-// delete a bank by bankId
+// delete a employee monthly salary by employeeId
+router.delete("/delete-salary", checkIsAdmin, deleteEmployeeSalary);
+
+// delete a employee by employeeId
 router.delete("/delete-employee/:employeeId", checkIsAdmin, deleteEmployee);
 
 module.exports = router;
