@@ -8,17 +8,32 @@ const Stock = require("../../../models/storeAdmin/stockSchema");
 //get all return sales
 const returnSales = async (req, res) => {
   try {
+    const page = parseInt(req.query.page) || 1; // Default page is 1
+    const limit = parseInt(req.query.limit) || 10; // Default limit is 10
+    const skip = (page - 1) * limit; // Calculate offset
+
+    // Get total count
+    const totalReturnSales = await ReturnSale.countDocuments({
+      storeInfo: req.store.storeId,
+    });
+
     //get category from database
     const returnSales = await ReturnSale.find({
       storeInfo: req.store.storeId,
     })
-      .populate(["product", "sales"])
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .populate(["product", "sales"]);
 
     //send the response
     if (returnSales && returnSales.length >= 0) {
       res.json({
         data: returnSales,
+        total: totalReturnSales,
+        currentPage: page,
+        totalPages: Math.ceil(totalReturnSales / limit),
+        limit: limit,
       });
     } else {
       res.json({
