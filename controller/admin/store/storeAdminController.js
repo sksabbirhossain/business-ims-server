@@ -6,7 +6,9 @@ const Store = require("../../../models/superAdmin/stores/storeSchema");
 const logInStore = async (req, res) => {
   try {
     //find the user
-    const findStore = await Store.findOne({ email: req.body.email });
+    const findStore = await Store.findOne({ email: req.body.email })
+      .select("+password")
+      .lean();
     if (!findStore?._id) {
       return res.json({
         errors: {
@@ -34,7 +36,7 @@ const logInStore = async (req, res) => {
     }
 
     //create store object
-    const storeInfo = { ...findStore._doc };
+    const storeInfo = findStore;
     delete storeInfo.password;
 
     //create accessToken
