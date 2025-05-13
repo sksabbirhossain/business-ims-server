@@ -89,13 +89,11 @@ const searchStock = async (req, res) => {
     //get search query
     const search = req.query?.name;
 
-    //get stock from database
+    //get stocks from database
     const stocks = await Stock.find({
       storeInfo: req.store.storeId,
-      $or: [{ name: { $regex: search, $options: "i" } }],
-    })
-      .populate(["supplierInfo", "category"])
-      .limit(10);
+      $or: [{ name: { $regex: search, $options: "i" }, quantity: { $gt: 0 } }],
+    }).populate(["supplierInfo", "category"]);
 
     //send the response
     if (stocks && stocks.length >= 0) {
@@ -112,7 +110,6 @@ const searchStock = async (req, res) => {
       });
     }
   } catch (err) {
-    console.log(err);
     res.json({
       errors: {
         common: {
