@@ -13,17 +13,18 @@ const {
   customerValidationHandler,
 } = require("../../../validators/admin/customer/customerValidators");
 const { updateCustomerValidationHandler, updateCustomerValidators } = require("../../../validators/admin/customer/updateCustomerValidators");
+const checkIsSubscribed = require("../../../middleware/common/admin/checkIsSubscribed");
 
 const router = express.Router();
 
 //get customers
-router.get("/", checkIsAdmin, getCustomers);
+router.get("/", checkIsAdmin,checkIsSubscribed, getCustomers);
 
 //get all customer
-router.get("/all", checkIsAdmin, getAllCustomer);
+router.get("/all", checkIsAdmin,checkIsSubscribed, getAllCustomer);
 
 //get a customer by id
-router.get("/:customerId", checkIsAdmin, getCustomer);
+router.get("/:customerId", checkIsAdmin,checkIsSubscribed, getCustomer);
 
 //create customer
 router.post(

@@ -13,22 +13,24 @@ const {
   stockValidators,
   stockValidationHandler,
 } = require("../../../validators/admin/stock/stockValidators");
+const checkIsSubscribed = require("../../../middleware/common/admin/checkIsSubscribed");
 
 const router = express.Router();
 
 //search a stock
-router.get("/search", checkIsAdmin, searchStock);
+router.get("/search", checkIsAdmin, checkIsSubscribed, searchStock);
 
 //get all stock
-router.get("/all", checkIsAdmin, getStocks);
+router.get("/all", checkIsAdmin, checkIsSubscribed, getStocks);
 
 //get a stock
-router.get("/:stockId", checkIsAdmin, getStock);
+router.get("/:stockId", checkIsAdmin, checkIsSubscribed, getStock);
 
 //create a stock
 router.post(
   "/create",
   checkIsAdmin,
+  checkIsSubscribed,
   stockValidators,
   stockValidationHandler,
   createStock
@@ -38,12 +40,13 @@ router.post(
 router.patch(
   "/update/:stockId",
   checkIsAdmin,
+  checkIsSubscribed,
   stockValidators,
   stockValidationHandler,
   updateStock
 );
 
 //delete a stock by id
-router.delete("/delete/:stockId", checkIsAdmin, deleteStock);
+router.delete("/delete/:stockId", checkIsAdmin, checkIsSubscribed, deleteStock);
 
 module.exports = router;

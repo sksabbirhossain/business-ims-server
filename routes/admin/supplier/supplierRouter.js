@@ -11,19 +11,26 @@ const {
   supplierValidators,
   supplierValidationHandler,
 } = require("../../../validators/admin/supplier/supplierValidators");
+const checkIsSubscribed = require("../../../middleware/common/admin/checkIsSubscribed");
 
 const router = express.Router();
 
 //get all supplier
-router.get("/suppliers", checkIsAdmin, suppliers);
+router.get("/suppliers", checkIsAdmin, checkIsSubscribed, suppliers);
 
 //get a supplier
-router.get("/supplier/:supplierId", checkIsAdmin, getSupplier);
+router.get(
+  "/supplier/:supplierId",
+  checkIsAdmin,
+  checkIsSubscribed,
+  getSupplier
+);
 
 //update a supplier by supplierId
 router.post(
   "/update-supplier/:supplierId",
   checkIsAdmin,
+  checkIsSubscribed,
   supplierValidators,
   supplierValidationHandler,
   updateSupplier
@@ -33,12 +40,18 @@ router.post(
 router.post(
   "/create-supplier",
   checkIsAdmin,
+  checkIsSubscribed,
   supplierValidators,
   supplierValidationHandler,
   createSupplier
 );
 
 //delete a supplier
-router.delete("/delete-supplier/:supplierId", checkIsAdmin, deleteSupplier);
+router.delete(
+  "/delete-supplier/:supplierId",
+  checkIsAdmin,
+  checkIsSubscribed,
+  deleteSupplier
+);
 
 module.exports = router;

@@ -10,20 +10,31 @@ const {
   deleteSale,
   searchSalesByTrxId,
 } = require("../../../controller/admin/sales/salesController");
+const checkIsSubscribed = require("../../../middleware/common/admin/checkIsSubscribed");
 
 //get all sales
-router.get("/sales", checkIsAdmin, getAllSales);
+router.get("/sales", checkIsAdmin, checkIsSubscribed, getAllSales);
 
 //get sales by trx id
-router.get("/sales/search", checkIsAdmin, searchSalesByTrxId);
+router.get(
+  "/sales/search",
+  checkIsAdmin,
+  checkIsSubscribed,
+  searchSalesByTrxId
+);
 
 //get a single sales
-router.get("/sales/:salesId", checkIsAdmin, getSale);
+router.get("/sales/:salesId", checkIsAdmin, checkIsSubscribed, getSale);
 
 //create sales
-router.post("/sales-pament", checkIsAdmin, createSalesPayment);
+router.post(
+  "/sales-pament",
+  checkIsAdmin,
+  checkIsSubscribed,
+  createSalesPayment
+);
 
 //delete sales
-router.delete("/sales/:salesId", checkIsAdmin, deleteSale);
+router.delete("/sales/:salesId", checkIsAdmin, checkIsSubscribed, deleteSale);
 
 module.exports = router;
