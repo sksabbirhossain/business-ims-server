@@ -42,6 +42,7 @@ const storeSchema = mongoose.Schema(
       type: String,
       required: true,
       trim: true,
+      select: false,
     },
     role: {
       type: String,
@@ -57,6 +58,30 @@ const storeSchema = mongoose.Schema(
     verifiedStore: {
       type: Boolean,
       default: false,
+    },
+    // ✅ Subscription Fields
+    isActive: {
+      type: Boolean,
+      default: false, // initially inactive until payment
+    },
+    subscription: {
+      plan: {
+        type: String,
+        enum: ["monthly", "yearly"],
+        default: "monthly",
+      },
+      startDate: {
+        type: Date,
+        default: null,
+      },
+      endDate: {
+        type: Date,
+        default: null,
+      },
+    },
+    latestSubscription: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "SubscriptionHistory",
     },
   },
   { timestamps: true }
