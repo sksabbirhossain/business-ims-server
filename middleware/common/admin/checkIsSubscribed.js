@@ -36,7 +36,7 @@ const checkIsSubscribed = async (req, res, next) => {
       return res.status(403).json({
         errors: {
           common: {
-            msg: "Your subscription has expired. Please renew to access your feature!",
+            msg: "Your subscription has expired. Please renew to access this feature!",
           },
         },
         status: 403,

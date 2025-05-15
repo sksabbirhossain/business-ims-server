@@ -90,7 +90,10 @@ const storeSchema = mongoose.Schema(
 // Middleware to create financial model after store creation
 storeSchema.post("save", async function (doc, next) {
   try {
-    await Financial.create({ storeInfo: doc._id });
+    const existing = await Financial.findOne({ storeInfo: doc._id });
+    if (!existing) {
+      await Financial.create({ storeInfo: doc._id });
+    }
     next();
   } catch (error) {
     next(error);
