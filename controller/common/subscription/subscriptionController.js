@@ -2,10 +2,60 @@ const stripe = require("../../../configs/stripe");
 const SubscriptionHistory = require("../../../models/storeAdmin/subscriptionHistorySchema");
 const Store = require("../../../models/superAdmin/stores/storeSchema");
 
+//get banks with pagination
+const getSubscriptions = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1; // Default page is 1
+    const limit = parseInt(req.query.limit) || 10; // Default limit is 10
+    const skip = (page - 1) * limit; // Calculate offset
+
+    // Get total count
+    const totalHistory = await SubscriptionHistory.countDocuments({
+      storeInfo: req.store.storeId,
+    });
+
+    //get subscription history from database
+    const history = await SubscriptionHistory.find({
+      storeInfo: req.store.storeId,
+    })
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    //send the response
+    if (history && history.length >= 0) {
+      res.json({
+        data: history,
+        total: totalHistory,
+        currentPage: page,
+        totalPages: Math.ceil(totalHistory / limit),
+        limit: limit,
+      });
+    } else {
+      res.json({
+        errors: {
+          common: {
+            msg: "Unknown error occured!",
+          },
+        },
+      });
+    }
+  } catch (err) {
+    res.json({
+      errors: {
+        common: {
+          msg: err.message,
+        },
+      },
+    });
+  }
+};
+
 //create stripe payment
 const stripePayment = async (req, res) => {
   try {
-    const { paymentMethodId, planType, paymentMethod } = req.body;
+    const { paymentMethodId, planType, paymentMethod, postalCode, country } =
+      req.body;
 
     const { storeId } = req.store;
 
@@ -42,6 +92,14 @@ const stripePayment = async (req, res) => {
         storeId,
         plan: planType,
       },
+      shipping: {
+        name: store.ownerName,
+        address: {
+          line1: store.address,
+          postal_code: req.body.postalCode,
+          country: req.body.country,
+        },
+      },
     });
 
     if (paymentIntent.status !== "succeeded") {
@@ -58,6 +116,7 @@ const stripePayment = async (req, res) => {
     const subscription = await SubscriptionHistory.create({
       storeInfo: store._id,
       paymentAmount,
+      plan: planType,
       paymentMethod,
       transactionId: paymentIntent.latest_charge,
       durationInMonths,
@@ -91,5 +150,6 @@ const stripePayment = async (req, res) => {
 };
 
 module.exports = {
+  getSubscriptions,
   stripePayment,
 };

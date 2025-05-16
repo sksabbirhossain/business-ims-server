@@ -12,9 +12,14 @@ const subscriptionHistorySchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    plan: {
+      type: String,
+      enum: ["monthly", "yearly"],
+      default: "monthly",
+    },
     paymentMethod: {
       type: String,
-      enum: ["bkash", "nagad","stripe", "card", "manual"],
+      enum: ["bkash", "nagad", "stripe", "card", "manual"],
       required: true,
     },
     transactionId: {

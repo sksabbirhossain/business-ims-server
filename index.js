@@ -100,7 +100,7 @@ app.use("/api/admin/bank", bankRouter);
 app.use("/api/admin/employee", employeeRouter);
 
 //subscription routes
-app.use("/api/subscription", subscriptionRouter);
+app.use("/api/admin/subscription", subscriptionRouter);
 
 //404 not found error handler
 app.use(notFoundHandler);

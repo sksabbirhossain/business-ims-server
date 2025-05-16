@@ -2,9 +2,19 @@ const express = require("express");
 const checkIsAdmin = require("../../../middleware/common/admin/checkIsAdmin");
 const {
   stripePayment,
+  getSubscriptions,
 } = require("../../../controller/common/subscription/subscriptionController");
+const checkIsSubscribed = require("../../../middleware/common/admin/checkIsSubscribed");
 
 const router = express.Router();
+
+//get subscription with pagination
+router.get(
+  "/subscription-list",
+  checkIsAdmin,
+  checkIsSubscribed,
+  getSubscriptions
+);
 
 //create stripe payment route
 router.post("/stripe-payment", checkIsAdmin, stripePayment);
