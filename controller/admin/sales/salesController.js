@@ -57,6 +57,63 @@ const getAllSales = async (req, res) => {
     });
   }
 };
+//get all sales
+const getDueSales = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1; // Default page is 1
+    const limit = parseInt(req.query.limit) || 10; // Default limit is 10
+    const skip = (page - 1) * limit; // Calculate offset
+
+    // Get total count
+    const totalDueSales = await Sales.countDocuments({
+      storeInfo: req.store.storeId,
+      due: { $gt: 0 },
+    });
+
+    //get all sales
+    const dueSales = await Sales.find({
+      storeInfo: req.store?.storeId,
+      due: { $gt: 0 },
+    })
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    for (const sale of dueSales) {
+      // Check if `customer` is an ObjectId (string)
+      if (mongoose.isValidObjectId(sale.customer)) {
+        sale.customer = await Customer.findById(sale.customer).lean();
+      }
+    }
+
+    //send the response
+    if (dueSales) {
+      res.json({
+        data: dueSales,
+        total: totalDueSales,
+        currentPage: page,
+        totalPages: Math.ceil(totalDueSales / limit),
+        limit: limit,
+      });
+    } else {
+      res.json({
+        errors: {
+          common: {
+            msg: "Unknown error occured!",
+          },
+        },
+      });
+    }
+  } catch (err) {
+    res.json({
+      errors: {
+        common: {
+          msg: err.message,
+        },
+      },
+    });
+  }
+};
 
 //search sales by trxid
 const searchSalesByTrxId = async (req, res) => {
@@ -69,6 +126,60 @@ const searchSalesByTrxId = async (req, res) => {
       trxid: trxid,
       storeInfo: req.store?.storeId,
     }).populate("cart.product");
+
+    //send the response
+    if (sales) {
+      res.json({
+        data: sales,
+      });
+    } else {
+      res.json({
+        data: [],
+      });
+    }
+  } catch (err) {
+    res.json({
+      errors: {
+        common: {
+          msg: err.message,
+        },
+      },
+    });
+  }
+};
+
+//search due sales by trxid or customer name
+const searchDueSalesByNameTrxId = async (req, res) => {
+  try {
+    const searchQuery = req.query.query?.trim();
+    const storeId = req.store?.storeId;
+
+    if (!searchQuery || !storeId) {
+      return res.status(400).json({
+        errors: {
+          common: {
+            msg: "Search query and store ID are required",
+          },
+        },
+      });
+    }
+    // Find customers by name
+    const matchedCustomers = await Customer.find({
+      storeInfo: storeId,
+      name: new RegExp(searchQuery, "i"),
+    }).select("_id");
+
+    const customerIds = matchedCustomers.map((c) => c._id.toString());
+
+    // Use $or to search by trxid or customer id
+    const sales = await Sales.find({
+      storeInfo: storeId,
+      due: { $gt: 0 },
+      $or: [
+        { trxid: new RegExp(searchQuery, "i") },
+        { customer: { $in: customerIds } },
+      ],
+    }).populate("cart.product customer");
 
     //send the response
     if (sales) {
@@ -225,7 +336,9 @@ const deleteSale = async (req, res) => {
 
 module.exports = {
   getAllSales,
+  getDueSales,
   searchSalesByTrxId,
+  searchDueSalesByNameTrxId,
   getSale,
   createSalesPayment,
   deleteSale,
