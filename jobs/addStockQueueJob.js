@@ -1,6 +1,6 @@
 const { Queue, Worker } = require("bullmq");
 const { redisConnection, defaultQueueOptions } = require("../configs/queue");
-const Stock = require("../models/storeAdmin/stockSchema");
+const Stock = require("../modules/admin/models/stockSchema");
 
 //define queue name
 const addStockQueueName = "addStock-queue";

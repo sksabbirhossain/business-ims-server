@@ -1,4 +1,4 @@
-const Store = require("../../../models/superAdmin/stores/storeSchema");
+const Store = require("../../../modules/superAdmin/models/storeSchema");
 
 const checkIsSubscribed = async (req, res, next) => {
   try {
