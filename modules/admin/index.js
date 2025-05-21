@@ -18,7 +18,7 @@ router.use("/dashboard", require("./routes/dashboard/dashboardRouter"));
 router.use("/customer", require("./routes/customer/customerRouter"));
 router.use("/bank", require("./routes/bank/bankRouter"));
 router.use("/employee", require("./routes/employee/employeeRouter"));
-router.use("/finance", require("./routes/financial/financialRouter"));
+router.use("/financial", require("./routes/financial/financialRouter"));
 router.use(
   "/subscription",
   require("./routes/subscription/subscriptionRouter")
