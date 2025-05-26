@@ -9,6 +9,7 @@ const mongoose = require("mongoose");
 const Customer = require("../../models/customerSchema");
 const Financial = require("../../models/financialSchema");
 const Sales = require("../../models/salesSchema");
+const DuePayment = require("../../models/duePaymentSchema");
 
 //get all sales
 const getAllSales = async (req, res) => {
@@ -288,6 +289,145 @@ const createSalesPayment = async (req, res) => {
   }
 };
 
+//create due sales payment
+const createDueSalesPayment = async (req, res) => {
+  try {
+    //check if amount is exists
+    if (!req.body.amount) {
+      return res.json({
+        errors: {
+          common: {
+            msg: "Paid amount is required!",
+          },
+        },
+      });
+    }
+    //check if amount is number
+    if (isNaN(req.body.amount)) {
+      return res.json({
+        errors: {
+          common: {
+            msg: "Paid amount must be a number!",
+          },
+        },
+      });
+    }
+    //check if amount is a valid number
+    if (req.body.amount < 0 || !isFinite(req.body.amount)) {
+      return res.json({
+        errors: {
+          common: {
+            msg: "Paid amount must be a valid number!",
+          },
+        },
+      });
+    }
+
+    //check if salesid is exists
+    if (!req.body.saleId) {
+      return res.json({
+        errors: {
+          common: {
+            msg: "Sale ID is required!",
+          },
+        },
+      });
+    }
+    //check if sale exists
+    const existingSale = await Sales.findOne({
+      _id: req.body.saleId,
+      storeInfo: req.store?.storeId,
+    });
+    if (!existingSale) {
+      return res.json({
+        errors: {
+          common: {
+            msg: "Sale not found!",
+          },
+        },
+      });
+    }
+    //check if due amount is greater than 0
+    if (existingSale.due <= 0) {
+      return res.json({
+        errors: {
+          common: {
+            msg: "Due amount must be greater than 0!",
+          },
+        },
+      });
+    }
+    //check if paid amount is greater than 0
+    if (req.body.amount <= 0) {
+      return res.json({
+        errors: {
+          common: {
+            msg: "Paid amount must be greater than 0!",
+          },
+        },
+      });
+    }
+    //check if paid amount is greater than due amount
+    if (req.body.amount > existingSale.due) {
+      return res.json({
+        errors: {
+          common: {
+            msg: "Paid amount must be less than or equal to due amount!",
+          },
+        },
+      });
+    }
+    //check if paid amount is equal to due amount
+    if (req.body.amount === existingSale.due) {
+      //update sales due to 0
+      existingSale.due = 0;
+      await existingSale.save();
+    } else {
+      //update sales due amount
+      existingSale.due -= req.body.amount;
+      await existingSale.save();
+    }
+    //create due payment
+    const duePayment = new DuePayment({
+      name: existingSale.customer?.name || "N/A", // Use customer name if available
+      amount: req.body.amount,
+      totalAmount: existingSale.totalPrice, // Total amount of the original sale
+      storeInfo: req.store?.storeId,
+      trxid: existingSale.trxid, // Use the same transaction ID as the original sale
+      saleId: existingSale._id, // Link to the original sale
+    });
+    //save due payment
+    await duePayment.save();
+
+    //calculete profit
+    const finance = await Financial.findOne({ storeInfo: req.store?.storeId });
+    if (!finance) return;
+    //calculete total sales revenue
+    finance.totalSalesRevenue += req.body.amount;
+    //calculete total profit
+    finance.totalProfit =
+      finance.totalSalesRevenue -
+      (finance.totalPurchaseCost + finance.totalExpenses);
+    //calculete total due
+    finance.totalDue -= req.body.amount;
+    //save finance
+    await finance.save();
+    //send the response
+    res.json({
+      data: duePayment,
+      msg: "Due Sales Payment was created successful!",
+    });
+  } catch (err) {
+    res.json({
+      errors: {
+        common: {
+          msg: err.message,
+        },
+      },
+    });
+  }
+};
+
 //delete sales by id
 const deleteSale = async (req, res) => {
   try {
@@ -347,5 +487,6 @@ module.exports = {
   searchDueSalesByNameTrxId,
   getSale,
   createSalesPayment,
+  createDueSalesPayment,
   deleteSale,
 };

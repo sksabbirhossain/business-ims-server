@@ -7,10 +7,17 @@
 const express = require("express");
 const checkIsAdmin = require("../../../../middleware/common/admin/checkIsAdmin");
 const checkIsSubscribed = require("../../../../middleware/common/admin/checkIsSubscribed");
-const { getAllSales, getDueSales, searchSalesByTrxId, searchDueSalesByNameTrxId, getSale, createSalesPayment, deleteSale } = require("../../controllers/sales/salesController");
+const {
+  getAllSales,
+  getDueSales,
+  searchSalesByTrxId,
+  searchDueSalesByNameTrxId,
+  getSale,
+  createSalesPayment,
+  deleteSale,
+  createDueSalesPayment,
+} = require("../../controllers/sales/salesController");
 const router = express.Router();
- 
- 
 
 //get all sales
 router.get("/sales", checkIsAdmin, checkIsSubscribed, getAllSales);
@@ -43,6 +50,14 @@ router.post(
   checkIsAdmin,
   checkIsSubscribed,
   createSalesPayment
+);
+
+//create due sales payment
+router.post(
+  "/due-sales-payment",
+  checkIsAdmin,
+  checkIsSubscribed,
+  createDueSalesPayment
 );
 
 //delete sales
