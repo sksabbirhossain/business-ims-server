@@ -226,10 +226,17 @@ const getSale = async (req, res) => {
       sale.customer = await Customer.findById(sale.customer).lean();
     }
 
+    //get the due payment history for this sale
+    const getDuePayments = await DuePayment.find({
+      saleId: salesId,
+      storeInfo: req.store?.storeId,
+    }).sort({ createdAt: -1 });
+
     //send the response
     if (sale) {
       res.json({
         data: sale,
+        histories: getDuePayments,
       });
     } else {
       res.json({
