@@ -323,6 +323,8 @@ const createDueSalesPayment = async (req, res) => {
       });
     }
 
+    const amount = parseInt(req.body.amount);
+
     //check if salesid is exists
     if (!req.body.saleId) {
       return res.json({
@@ -358,7 +360,7 @@ const createDueSalesPayment = async (req, res) => {
       });
     }
     //check if paid amount is greater than 0
-    if (req.body.amount <= 0) {
+    if (amount <= 0) {
       return res.json({
         errors: {
           common: {
@@ -368,7 +370,7 @@ const createDueSalesPayment = async (req, res) => {
       });
     }
     //check if paid amount is greater than due amount
-    if (req.body.amount > existingSale.due) {
+    if (amount > existingSale.due) {
       return res.json({
         errors: {
           common: {
@@ -377,20 +379,22 @@ const createDueSalesPayment = async (req, res) => {
         },
       });
     }
+
     //check if paid amount is equal to due amount
-    if (req.body.amount === existingSale.due) {
+    if (amount === existingSale.due) {
       //update sales due to 0
       existingSale.due = 0;
       await existingSale.save();
     } else {
       //update sales due amount
-      existingSale.due -= req.body.amount;
+      existingSale.due -= amount;
       await existingSale.save();
     }
+
     //create due payment
     const duePayment = new DuePayment({
       name: existingSale.customer?.name || "N/A", // Use customer name if available
-      amount: req.body.amount,
+      amount: amount,
       totalAmount: existingSale.totalPrice, // Total amount of the original sale
       storeInfo: req.store?.storeId,
       trxid: existingSale.trxid, // Use the same transaction ID as the original sale
@@ -402,14 +406,8 @@ const createDueSalesPayment = async (req, res) => {
     //calculete profit
     const finance = await Financial.findOne({ storeInfo: req.store?.storeId });
     if (!finance) return;
-    //calculete total sales revenue
-    finance.totalSalesRevenue += req.body.amount;
-    //calculete total profit
-    finance.totalProfit =
-      finance.totalSalesRevenue -
-      (finance.totalPurchaseCost + finance.totalExpenses);
     //calculete total due
-    finance.totalDue -= req.body.amount;
+    finance.totalDue -= amount;
     //save finance
     await finance.save();
     //send the response

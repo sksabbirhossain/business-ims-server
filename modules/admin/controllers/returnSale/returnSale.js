@@ -150,8 +150,8 @@ const createReturnSale = async (req, res) => {
 
     //if return all products
     if (sales.cart.length === 0) {
+      sales.hasReturns = true;
     }
-    sales.hasReturns = true;
 
     await sales.save();
 

@@ -113,6 +113,7 @@ const SalesSchema = new mongoose.Schema(
 
 // **Reduce stock when a sale is created**
 SalesSchema.pre("save", async function (next) {
+  if (!this.isNew) return next();
   try {
     if (this.hasReturns === false) {
       for (const item of this.cart) {
@@ -137,6 +138,7 @@ SalesSchema.pre("save", async function (next) {
 
 //calculate financial when a sale is created
 SalesSchema.pre("save", async function (next) {
+  if (!this.isNew) return next();
   try {
     const financial = await Financial.findOne({ storeInfo: this.storeInfo });
 
