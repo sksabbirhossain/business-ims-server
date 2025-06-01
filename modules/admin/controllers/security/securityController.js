@@ -52,11 +52,16 @@ const changePassword = async (req, res) => {
     //set new password
     const hashedPassword = await bcrypt.hash(newPassword, 10);
 
-    user.password = hashedPassword;
-    const result = await user.save();
+    store.password = hashedPassword;
+    const result = await store.save();
 
-    if (!result) {
-      return res.status(500).json({
+    if (result._id) {
+      res.status(200).json({
+        data: result,
+        msg: "Password changed successfully!",
+      });
+    } else {
+      res.status(500).json({
         errors: {
           common: {
             msg: "Failed to change password. Please try again.",
@@ -64,9 +69,6 @@ const changePassword = async (req, res) => {
         },
       });
     }
-    return res.status(200).json({
-      msg: "Password changed successfully!",
-    });
   } catch (err) {
     res.json({
       errors: {

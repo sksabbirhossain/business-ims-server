@@ -8,7 +8,10 @@
 const express = require("express");
 const checkIsSubscribed = require("../../../../middleware/common/admin/checkIsSubscribed");
 const checkIsAdmin = require("../../../../middleware/common/admin/checkIsAdmin");
-const { changePassword } = require("../../controllers/security/securityController");
+const {
+  changePassword,
+} = require("../../controllers/security/securityController");
+const { securityValidators, securityValidationHandler } = require("../../validators/security/securityValidators");
 
 const router = express.Router();
 
@@ -17,6 +20,8 @@ router.post(
   "/change-password",
   checkIsAdmin,
   checkIsSubscribed,
+  securityValidators,
+  securityValidationHandler,
   changePassword
 );
 
