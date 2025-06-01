@@ -23,5 +23,6 @@ router.use(
   "/subscription",
   require("./routes/subscription/subscriptionRouter")
 );
+router.use("/security", require("./routes/security/securityRouter"));
 
 module.exports = router;
