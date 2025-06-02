@@ -79,6 +79,65 @@ const changePassword = async (req, res) => {
     });
   }
 };
+
+//update store profile controller
+const updateStoreProfile = async (req, res) => {
+  try {
+    const { ownerName, storeName, phone, website, address } = req.body;
+
+    //check valid store
+    const store = await Store.findOne({
+      email: req.store.email,
+      _id: req.store.storeId,
+    });
+    if (!store) {
+      return res.status(404).json({
+        errors: {
+          common: {
+            msg: "Store not found.",
+          },
+        },
+      });
+    }
+
+    const result = await Store.findByIdAndUpdate(
+      { _id: req.store.storeId, email: req.store.email },
+      {
+        ownerName,
+        storeName,
+        phone,
+        website,
+        address,
+      },
+      { new: true, runValidators: true }
+    );
+
+    if (result._id) {
+      res.status(200).json({
+        data: result,
+        msg: "Store profile updated successfully!",
+      });
+    } else {
+      res.status(500).json({
+        errors: {
+          common: {
+            msg: "Failed to update profile. Please try again.",
+          },
+        },
+      });
+    }
+  } catch (err) {
+    res.json({
+      errors: {
+        common: {
+          msg: "Unknown error occured!",
+        },
+      },
+    });
+  }
+};
+
 module.exports = {
   changePassword,
+  updateStoreProfile,
 };

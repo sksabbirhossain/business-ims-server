@@ -10,8 +10,12 @@ const checkIsSubscribed = require("../../../../middleware/common/admin/checkIsSu
 const checkIsAdmin = require("../../../../middleware/common/admin/checkIsAdmin");
 const {
   changePassword,
+  updateStoreProfile,
 } = require("../../controllers/security/securityController");
-const { securityValidators, securityValidationHandler } = require("../../validators/security/securityValidators");
+const {
+  securityValidators,
+  securityValidationHandler,
+} = require("../../validators/security/securityValidators");
 
 const router = express.Router();
 
@@ -24,5 +28,8 @@ router.post(
   securityValidationHandler,
   changePassword
 );
+
+//update store profile
+router.patch("/profile", checkIsAdmin, checkIsSubscribed, updateStoreProfile);
 
 module.exports = router;
