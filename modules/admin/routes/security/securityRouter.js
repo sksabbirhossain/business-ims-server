@@ -16,6 +16,10 @@ const {
   securityValidators,
   securityValidationHandler,
 } = require("../../validators/security/securityValidators");
+const {
+  updateStoreProfileValidators,
+  updateStoreProfileValidationHandler,
+} = require("../../validators/security/updateStoreProfileValidators");
 
 const router = express.Router();
 
@@ -30,6 +34,13 @@ router.post(
 );
 
 //update store profile
-router.patch("/profile", checkIsAdmin, checkIsSubscribed, updateStoreProfile);
+router.patch(
+  "/profile",
+  checkIsAdmin,
+  checkIsSubscribed,
+  updateStoreProfileValidators,
+  updateStoreProfileValidationHandler,
+  updateStoreProfile
+);
 
 module.exports = router;
