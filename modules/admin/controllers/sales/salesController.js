@@ -18,13 +18,27 @@ const getAllSales = async (req, res) => {
     const limit = parseInt(req.query.limit) || 10; // Default limit is 10
     const skip = (page - 1) * limit; // Calculate offset
 
-    // Get total count
-    const totalSales = await Sales.countDocuments({
+    // search query and filter
+    const { query = "", filter = "" } = req.query;
+
+    // Create search filter
+    const searchQuery = {
       storeInfo: req.store.storeId,
-    });
+    };
+
+    // If filter is due/complete
+    if (filter === "due") {
+      searchQuery.paymentStatus = "due";
+      searchQuery.due = { $gt: 0 };
+    } else if (filter === "completed") {
+      searchQuery.paymentStatus = "completed";
+    }
+
+    // Get total count
+    const totalSales = await Sales.countDocuments(searchQuery);
 
     //get all sales
-    const sales = await Sales.find({ storeInfo: req.store?.storeId })
+    const sales = await Sales.find(searchQuery)
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);

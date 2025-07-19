@@ -88,13 +88,15 @@ const SalesSchema = new mongoose.Schema(
     },
     paymentStatus: {
       type: String,
-      enum: ["Pending", "Completed", "Failed"],
-      default: "Completed",
+      enum: ["pending", "completed", "failed", "due"],
+      default: "completed",
+      lowercase: true,
     },
     paymentMethod: {
       type: String,
-      enum: ["Cash", "Credit Card", "Online"],
-      default: "Cash",
+      enum: ["cash", "bank", "cash/bank"],
+      default: "cash",
+      lowercase: true,
     },
     storeInfo: {
       type: mongoose.Types.ObjectId,
