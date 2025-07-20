@@ -19,7 +19,7 @@ const getAllSales = async (req, res) => {
     const skip = (page - 1) * limit; // Calculate offset
 
     // search query and filter
-    const { query = "", filter = "" } = req.query;
+    const { query, filter } = req.query || {};
 
     // Create search filter
     const searchQuery = {
@@ -34,6 +34,12 @@ const getAllSales = async (req, res) => {
       searchQuery.paymentStatus = "completed";
     }
 
+    // Apply text search (trxid )
+    if (query && query !== "undefined" && query.trim()) {
+      const regex = new RegExp(query.trim(), "i");
+      searchQuery.$or = [{ trxid: regex }];
+    }
+
     // Get total count
     const totalSales = await Sales.countDocuments(searchQuery);
 
@@ -41,7 +47,8 @@ const getAllSales = async (req, res) => {
     const sales = await Sales.find(searchQuery)
       .sort({ createdAt: -1 })
       .skip(skip)
-      .limit(limit);
+      .limit(limit)
+      .lean();
 
     for (const sale of sales) {
       // Check if `customer` is an ObjectId (string)
@@ -69,6 +76,7 @@ const getAllSales = async (req, res) => {
       });
     }
   } catch (err) {
+    console.error("Error in getAllSales:", err);
     res.json({
       errors: {
         common: {
@@ -78,6 +86,7 @@ const getAllSales = async (req, res) => {
     });
   }
 };
+
 //get all sales
 const getDueSales = async (req, res) => {
   try {
