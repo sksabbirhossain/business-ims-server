@@ -5,11 +5,16 @@
  * Official Repository: https://github.com/sksabbirhossain/business-ims-server
  */
 const express = require("express");
-const { createStoreValidators, createStoreValidationHandler } = require("../../validators/stores/createStoreValidators");
-const { createStore } = require("../../controllers/stores/storeController");
- 
+const {
+  createStoreValidators,
+  createStoreValidationHandler,
+} = require("../../validators/stores/createStoreValidators");
+const { createStore, getAllStores } = require("../../controllers/stores/storeController");
 
 const router = express.Router();
+
+//get all stores route
+router.get("/store-list", getAllStores);
 
 //create store route
 router.post(

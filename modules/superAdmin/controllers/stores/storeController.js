@@ -7,6 +7,53 @@
 const bcrypt = require("bcrypt");
 const Store = require("../../models/storeSchema");
 
+//get all stores with pagination
+const getAllStores = async (req, res) => {
+  try {
+    //get page and limit from query
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    //get all stores with pagination
+    const stores = await Store.find()
+      .skip(skip)
+      .limit(limit)
+      .sort({ createdAt: -1 })
+      .select("-password -__v");
+
+    //get total count of stores
+    const totalStore = await Store.countDocuments();
+
+    //send the response
+    if (stores && stores.length >= 0) {
+      res.json({
+        data: stores,
+        total: totalStore,
+        currentPage: page,
+        totalPages: Math.ceil(totalStore / limit),
+        limit: limit,
+      });
+    } else {
+      res.json({
+        errors: {
+          common: {
+            msg: "Unknown error occured!",
+          },
+        },
+      });
+    }
+  } catch (err) {
+    res.json({
+      errors: {
+        common: {
+          msg: err.message,
+        },
+      },
+    });
+  }
+};
+
 //created store
 const createStore = async (req, res) => {
   try {
@@ -62,5 +109,6 @@ const createStore = async (req, res) => {
 };
 
 module.exports = {
+  getAllStores,
   createStore,
 };
