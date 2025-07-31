@@ -17,16 +17,7 @@ const checkUser = async (req, res) => {
 
     if (decoded?._id) {
       const userInfo = {
-        picture_info: decoded?.picture_info,
-        _id: decoded?._id,
-        storeName: decoded?.storeName,
-        ownerName: decoded?.ownerName,
-        phone: decoded?.phone,
-        email: decoded?.email,
-        role: decoded?.role,
-        createdAt: decoded?.createdAt,
-        updatedAt: decoded?.updatedAt,
-        __v: decoded?.__v,
+        ...decoded,
       };
       //create accessToken
       const accessToken = jwt.sign(userInfo, process.env.JWT_SECRET_KEY, {

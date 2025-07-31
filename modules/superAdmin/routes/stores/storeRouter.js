@@ -13,19 +13,29 @@ const {
   createStore,
   getAllStores,
   getStoreById,
+  updateStoreStatus,
 } = require("../../controllers/stores/storeController");
+const checkIsSuperAdmin = require("../../../../middleware/common/superAdmin/checkIsSuperAdmin");
 
 const router = express.Router();
 
 //get all stores route
-router.get("/store-list", getAllStores);
+router.get("/store-list", checkIsSuperAdmin, getAllStores);
 
 // get store by ID route
-router.get("/store-details/:storeId", getStoreById);
+router.get("/store-details/:storeId", checkIsSuperAdmin, getStoreById);
+
+// update store status route
+router.patch(
+  "/update-store-status/:storeId",
+  checkIsSuperAdmin,
+  updateStoreStatus
+);
 
 //create store route
 router.post(
   "/create-store",
+  checkIsSuperAdmin,
   createStoreValidators,
   createStoreValidationHandler,
   createStore

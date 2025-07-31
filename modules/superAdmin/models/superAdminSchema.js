@@ -28,8 +28,8 @@ const superAdminSchema = mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ["superAdmin", "moderator"],
-      default: "superAdmin",
+      enum: ["superadmin", "moderator"],
+      default: "superadmin",
     },
     picture: String,
     picture_info: {

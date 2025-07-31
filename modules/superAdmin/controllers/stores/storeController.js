@@ -6,6 +6,7 @@
  */
 const bcrypt = require("bcrypt");
 const Store = require("../../models/storeSchema");
+const SubscriptionHistory = require("../../../admin/models/subscriptionHistorySchema");
 
 //get all stores with pagination
 const getAllStores = async (req, res) => {
@@ -78,11 +79,89 @@ const getStoreById = async (req, res) => {
         },
       });
     }
+
+    // get the store's subscription history
+    const subscriptionHistory = await SubscriptionHistory.find({
+      storeInfo: storeId,
+    }).sort({ paymentDate: -1 });
+
+    // if no subscription history found, return empty array
+    if (!subscriptionHistory || subscriptionHistory.length === 0) {
+      return res.json({
+        data: { ...store._doc, subscriptionHistory: [] },
+      });
+    } else {
+      return res.json({
+        data: { ...store._doc, subscriptionHistory },
+      });
+    }
+  } catch (err) {
+    res.status(500).json({
+      errors: {
+        common: {
+          msg: err.message,
+        },
+      },
+    });
+  }
+};
+
+// update store status
+const updateStoreStatus = async (req, res) => {
+  try {
+    const storeId = req.params.storeId;
+    const { isActive } = req.body;
+
+    //check store ID is valid
+    if (!storeId) {
+      return res.status(400).json({
+        errors: {
+          common: {
+            msg: "Store ID is required!",
+          },
+        },
+      });
+    }
+
+    // convert status string to boolean
+    const parsedStatus =
+      isActive === true || isActive === "true"
+        ? true
+        : isActive === false || isActive === "false"
+        ? false
+        : null;
+
+    // check if parsed status is valid
+    if (parsedStatus === null) {
+      return res.status(400).json({
+        errors: {
+          common: { msg: "Status must be either true or false!" },
+        },
+      });
+    }
+
+    //update store status
+    const updatedStore = await Store.findByIdAndUpdate(
+      storeId,
+      { isActive: parsedStatus },
+      { new: true }
+    ).select("-password -__v");
+
+    if (!updatedStore) {
+      return res.status(404).json({
+        errors: {
+          common: {
+            msg: "Store not found!",
+          },
+        },
+      });
+    }
+
     //send the response
     res.json({
-      data: store,
+      data: updatedStore,
+      msg: "Store status updated successfully!",
     });
-    
   } catch (err) {
     res.status(500).json({
       errors: {
@@ -151,5 +230,6 @@ const createStore = async (req, res) => {
 module.exports = {
   getAllStores,
   getStoreById,
+  updateStoreStatus,
   createStore,
 };
