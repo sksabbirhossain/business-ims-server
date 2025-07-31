@@ -54,6 +54,46 @@ const getAllStores = async (req, res) => {
   }
 };
 
+// get a store by ID
+const getStoreById = async (req, res) => {
+  try {
+    const storeId = req.params.storeId;
+    //check store ID is valid
+    if (!storeId) {
+      return res.status(400).json({
+        errors: {
+          common: {
+            msg: "Store ID is required!",
+          },
+        },
+      });
+    }
+    const store = await Store.findById(storeId).select("-password -__v");
+    if (!store) {
+      return res.status(404).json({
+        errors: {
+          common: {
+            msg: "Store not found!",
+          },
+        },
+      });
+    }
+    //send the response
+    res.json({
+      data: store,
+    });
+    
+  } catch (err) {
+    res.status(500).json({
+      errors: {
+        common: {
+          msg: err.message,
+        },
+      },
+    });
+  }
+};
+
 //created store
 const createStore = async (req, res) => {
   try {
@@ -110,5 +150,6 @@ const createStore = async (req, res) => {
 
 module.exports = {
   getAllStores,
+  getStoreById,
   createStore,
 };

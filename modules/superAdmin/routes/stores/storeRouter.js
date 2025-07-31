@@ -9,12 +9,19 @@ const {
   createStoreValidators,
   createStoreValidationHandler,
 } = require("../../validators/stores/createStoreValidators");
-const { createStore, getAllStores } = require("../../controllers/stores/storeController");
+const {
+  createStore,
+  getAllStores,
+  getStoreById,
+} = require("../../controllers/stores/storeController");
 
 const router = express.Router();
 
 //get all stores route
 router.get("/store-list", getAllStores);
+
+// get store by ID route
+router.get("/store-details/:storeId", getStoreById);
 
 //create store route
 router.post(
