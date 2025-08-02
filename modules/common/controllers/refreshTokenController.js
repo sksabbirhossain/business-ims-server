@@ -16,9 +16,7 @@ const checkUser = async (req, res) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
 
     if (decoded?._id) {
-      const userInfo = {
-        ...decoded,
-      };
+      const { exp, iat, ...userInfo } = decoded;
       //create accessToken
       const accessToken = jwt.sign(userInfo, process.env.JWT_SECRET_KEY, {
         expiresIn: "1h",
@@ -38,7 +36,7 @@ const checkUser = async (req, res) => {
         expiresIn,
       });
     } else {
-      res.status(401).json({ status: 401, message: "unauthorized" });
+      res.status(401).json({ status: 401, message: "unauthorized!" });
     }
   } catch (err) {
     res.status(401).json({ status: 401, message: "unauthorized" });
