@@ -21,7 +21,7 @@ const checkIsSubscribed = async (req, res, next) => {
       });
     }
 
-    const store = await Store.findById(storeId).lean();
+    const store = await Store.findById(storeId);
 
     if (!store) {
       return res.status(404).json({
@@ -36,9 +36,14 @@ const checkIsSubscribed = async (req, res, next) => {
 
     // Subscription Check Logic
     const currentDate = new Date();
-    const expiryDate = new Date(store.subscription?.expiryDate);
+    const expiryDate = new Date(store.subscription?.endDate);
 
-    if (!store.isActive && (!store.subscription || expiryDate < currentDate)) {
+    if (!store.subscription || expiryDate < currentDate) {
+      if (store?.isActive) {
+        // change store active status to false
+        store.isActive = false;
+        await store.save();
+      }
       return res.status(403).json({
         errors: {
           common: {
